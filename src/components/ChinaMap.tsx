@@ -13,19 +13,6 @@ interface ChinaMapProps {
   className?: string;
 }
 
-function LoadingMap({ className }: { className?: string }) {
-  return (
-    <div
-      className={`bg-gradient-to-b from-blue-50 to-emerald-50 flex items-center justify-center ${className}`}
-    >
-      <div className="text-center">
-        <div className="animate-pulse text-4xl mb-3">🗺️</div>
-        <p className="text-sm text-muted-foreground">Loading map...</p>
-      </div>
-    </div>
-  );
-}
-
 export function ChinaMap({
   selectedCity,
   onCitySelect,
@@ -38,7 +25,6 @@ export function ChinaMap({
   const markersRef = useRef<L.Marker[]>([]);
   const leafletRef = useRef<typeof L | null>(null);
 
-  // Initialize map
   useEffect(() => {
     let cancelled = false;
 
@@ -50,31 +36,30 @@ export function ChinaMap({
 
       leafletRef.current = leaflet.default;
 
-      // Fix icon
-      delete (leaflet.default.Icon.Default.prototype as unknown as Record<string, unknown>)["_getIconUrl"];
-      leaflet.default.Icon.Default.mergeOptions({
-        iconRetinaUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-        iconUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-        shadowUrl:
-          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-      });
-
       const map = leaflet.default.map(containerRef.current, {
         center: { lat: 33.5, lng: 108.0 },
         zoom: 5,
         zoomControl: false,
+        attributionControl: false,
       });
 
       leaflet.default
-        .tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        })
+        .tileLayer(
+          "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+          { maxZoom: 19 }
+        )
         .addTo(map);
 
-      leaflet.default.control.zoom({ position: "bottomright" }).addTo(map);
+      leaflet.default
+        .tileLayer(
+          "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+          { maxZoom: 19, opacity: 0.4 }
+        )
+        .addTo(map);
+
+      leaflet.default.control
+        .zoom({ position: "bottomright" })
+        .addTo(map);
 
       mapRef.current = map;
       setReady(true);
@@ -91,55 +76,53 @@ export function ChinaMap({
     };
   }, []);
 
-  // Update markers when city selection changes
   useEffect(() => {
     const map = mapRef.current;
     const leaflet = leafletRef.current;
     if (!map || !leaflet || !ready) return;
 
-    // Clear old markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
     const newMarkers: L.Marker[] = [];
 
-    // City markers
     cities.forEach((city) => {
       const isSelected = selectedCity?.id === city.id;
+      const size = isSelected ? 14 : 10;
 
       const icon = leaflet.divIcon({
-        className: "city-marker",
+        className: "",
         html: `<div style="
-          width: ${isSelected ? 40 : 32}px;
-          height: ${isSelected ? 40 : 32}px;
-          background: ${isSelected ? "#dc2626" : "#f59e0b"};
-          border: 3px solid #fff;
-          border-radius: 50%;
-          box-shadow: 0 2px ${isSelected ? 12 : 8}px rgba(${isSelected ? "220,38,38" : "0,0,0"},${isSelected ? 0.4 : 0.3});
-          display: flex; align-items: center; justify-content: center;
-          font-size: ${isSelected ? 18 : 14}px;
-          cursor: pointer;
-          transition: all 0.2s;
-        ">🍜</div>`,
-        iconSize: [isSelected ? 40 : 32, isSelected ? 40 : 32],
-        iconAnchor: [isSelected ? 20 : 16, isSelected ? 20 : 16],
+          width:${size}px;height:${size}px;
+          background:${isSelected ? "#1a1a1a" : "#888"};
+          border:2px solid #fff;
+          border-radius:50%;
+          box-shadow:0 1px 3px rgba(0,0,0,0.2);
+          cursor:pointer;
+          transition:all 0.2s;
+        "></div>`,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2],
       });
 
       const marker = leaflet
-        .marker({ lat: city.map_center[0], lng: city.map_center[1] }, { icon })
+        .marker(
+          { lat: city.map_center[0], lng: city.map_center[1] },
+          { icon }
+        )
         .addTo(map)
         .bindPopup(
-          `<div style="text-align:center;padding:4px;">
-            <div style="font-weight:700;font-size:14px;">${city.name_en}</div>
-            <div style="color:#666;font-size:13px;">${city.name_zh}</div>
-          </div>`
+          `<div style="text-align:center;font-family:system-ui;padding:2px 0;">
+            <div style="font-weight:600;font-size:13px;color:#1a1a1a;">${city.name_en}</div>
+            <div style="font-size:12px;color:#999;margin-top:1px;">${city.name_zh}</div>
+          </div>`,
+          { closeButton: false, className: "minimal-popup" }
         )
         .on("click", () => onCitySelect(city));
 
       newMarkers.push(marker);
     });
 
-    // Restaurant markers when city is selected
     if (selectedCity) {
       const cityRestaurants = restaurants.filter(
         (r) => r.city_id === selectedCity.id
@@ -147,30 +130,28 @@ export function ChinaMap({
 
       cityRestaurants.forEach((restaurant) => {
         const icon = leaflet.divIcon({
-          className: "restaurant-marker",
+          className: "",
           html: `<div style="
-            width: 28px; height: 28px;
-            background: #dc2626;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px;
-            cursor: pointer;
-          ">🍽️</div>`,
-          iconSize: [28, 28],
-          iconAnchor: [14, 14],
+            width:8px;height:8px;
+            background:#555;
+            border:1.5px solid #fff;
+            border-radius:50%;
+            box-shadow:0 1px 2px rgba(0,0,0,0.15);
+            cursor:pointer;
+          "></div>`,
+          iconSize: [8, 8],
+          iconAnchor: [4, 4],
         });
 
         const marker = leaflet
           .marker([restaurant.lat, restaurant.lng], { icon })
           .addTo(map)
           .bindPopup(
-            `<div style="padding:4px;">
-              <div style="font-weight:700;font-size:13px;">${restaurant.name_en}</div>
-              <div style="color:#666;font-size:12px;">${restaurant.name_zh}</div>
-              <div style="color:#999;font-size:11px;margin-top:2px;">${restaurant.cuisine_type} · ${restaurant.price_band}</div>
-            </div>`
+            `<div style="font-family:system-ui;padding:2px 0;">
+              <div style="font-weight:600;font-size:12px;color:#1a1a1a;">${restaurant.name_en}</div>
+              <div style="font-size:11px;color:#999;margin-top:1px;">${restaurant.name_zh}</div>
+            </div>`,
+            { closeButton: false, className: "minimal-popup" }
           )
           .on("click", () => onRestaurantSelect?.(restaurant));
 
@@ -181,7 +162,6 @@ export function ChinaMap({
     markersRef.current = newMarkers;
   }, [selectedCity, ready, onCitySelect, onRestaurantSelect]);
 
-  // Fly to city when selection changes
   const prevCityRef = useRef<string | null>(null);
   useEffect(() => {
     const map = mapRef.current;
@@ -194,7 +174,10 @@ export function ChinaMap({
     try {
       if (selectedCity) {
         map.flyTo(
-          { lat: selectedCity.map_center[0], lng: selectedCity.map_center[1] },
+          {
+            lat: selectedCity.map_center[0],
+            lng: selectedCity.map_center[1],
+          },
           selectedCity.zoom,
           { duration: 1.2 }
         );
@@ -208,22 +191,31 @@ export function ChinaMap({
 
   return (
     <div className={className} style={{ position: "relative" }}>
+      <style>{`
+        .minimal-popup .leaflet-popup-content-wrapper {
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          border: 1px solid #e5e5e5;
+          padding: 0;
+        }
+        .minimal-popup .leaflet-popup-content {
+          margin: 8px 12px;
+        }
+        .minimal-popup .leaflet-popup-tip {
+          box-shadow: none;
+          border: 1px solid #e5e5e5;
+        }
+        .leaflet-control-zoom a {
+          color: #888 !important;
+          border-color: #e5e5e5 !important;
+        }
+      `}</style>
       <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
       {!ready && (
         <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "linear-gradient(to bottom, #eff6ff, #ecfdf5)",
-          }}
+          className="absolute inset-0 flex items-center justify-center bg-neutral-50"
         >
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🗺️</div>
-            <p style={{ fontSize: 14, color: "#666" }}>Loading map...</p>
-          </div>
+          <div className="h-5 w-5 rounded-full border-2 border-neutral-300 border-t-neutral-500 animate-spin" />
         </div>
       )}
     </div>
