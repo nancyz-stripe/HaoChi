@@ -62,7 +62,7 @@ export function ChinaMap({
       });
 
       const map = leaflet.default.map(containerRef.current, {
-        center: [33.5, 108.0],
+        center: { lat: 33.5, lng: 108.0 },
         zoom: 5,
         zoomControl: false,
       });
@@ -126,7 +126,7 @@ export function ChinaMap({
       });
 
       const marker = leaflet
-        .marker(city.map_center, { icon })
+        .marker({ lat: city.map_center[0], lng: city.map_center[1] }, { icon })
         .addTo(map)
         .bindPopup(
           `<div style="text-align:center;padding:4px;">
@@ -182,14 +182,27 @@ export function ChinaMap({
   }, [selectedCity, ready, onCitySelect, onRestaurantSelect]);
 
   // Fly to city when selection changes
+  const prevCityRef = useRef<string | null>(null);
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
 
-    if (selectedCity) {
-      map.flyTo(selectedCity.map_center, selectedCity.zoom, { duration: 1.2 });
-    } else {
-      map.flyTo([33.5, 108.0], 5, { duration: 1.2 });
+    const currentId = selectedCity?.id ?? null;
+    if (currentId === prevCityRef.current) return;
+    prevCityRef.current = currentId;
+
+    try {
+      if (selectedCity) {
+        map.flyTo(
+          { lat: selectedCity.map_center[0], lng: selectedCity.map_center[1] },
+          selectedCity.zoom,
+          { duration: 1.2 }
+        );
+      } else {
+        map.setView({ lat: 33.5, lng: 108.0 }, 5);
+      }
+    } catch {
+      // Map may have been removed during strict mode
     }
   }, [selectedCity, ready]);
 
