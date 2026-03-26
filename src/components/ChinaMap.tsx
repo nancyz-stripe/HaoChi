@@ -204,7 +204,7 @@ export function ChinaMap({
 
       cityRestaurants.forEach((restaurant) => {
         const isSelected = restaurant.id === selectedRestaurantId;
-        const dotSize = isSelected ? 14 : 7;
+        const dotSize = isSelected ? 16 : 14;
 
         const icon = leaflet.divIcon({
           className: "",
