@@ -94,7 +94,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "name" ? (
-                <span className="inline-flex items-center rounded-[4px] bg-[#E3FFE2] px-1 py-[2px] text-[8px] font-medium text-[#1F841B]">Copied!</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[8px] font-medium text-[#1A2C44]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
@@ -111,7 +111,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "address" ? (
-                <span className="inline-flex items-center rounded-[4px] bg-[#E3FFE2] px-1 py-[2px] text-[8px] font-medium text-[#1F841B]">Copied!</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[8px] font-medium text-[#1A2C44]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
@@ -159,7 +159,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                       </button>
                     </div>
                     {isMustTry && (
-                      <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#FFF4F4] px-2 py-1 text-[9px] font-medium text-[#A1341B]">
+                      <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[9px] font-medium text-[#1A2C44]">
                         <Sparkles className="h-3 w-3" />
                         MUST TRY
                       </span>
