@@ -2,134 +2,191 @@
 
 import { Restaurant } from "@/types";
 import { getRecommendationsForRestaurant } from "@/data";
-import { CopyButton } from "./CopyButton";
-import { DishCard } from "./DishCard";
-import { ArrowLeft, MapPin, Globe } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, Copy, Volume2, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { cities } from "@/data/cities";
+import { useState, useCallback } from "react";
+
+function useCopy() {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const copy = useCallback((text: string, id: string) => {
+    navigator.clipboard.writeText(text).catch(() => {
+      // Fallback for older browsers
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    });
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 1500);
+  }, []);
+
+  return { copiedId, copy };
+}
+
+function speakChinese(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "zh-CN";
+  utterance.rate = 0.85;
+
+  function setVoiceAndSpeak() {
+    const voices = window.speechSynthesis.getVoices();
+    const zhVoice =
+      voices.find((v) => v.lang.startsWith("zh") && v.localService) ||
+      voices.find((v) => v.lang.startsWith("zh"));
+    if (zhVoice) utterance.voice = zhVoice;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Voices may not be loaded yet on first call
+  if (window.speechSynthesis.getVoices().length > 0) {
+    setVoiceAndSpeak();
+  } else {
+    window.speechSynthesis.onvoiceschanged = () => {
+      setVoiceAndSpeak();
+    };
+  }
+}
 
 interface RestaurantDetailProps {
   restaurant: Restaurant;
 }
 
 export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
+  const router = useRouter();
   const city = cities.find((c) => c.id === restaurant.city_id);
   const recs = getRecommendationsForRestaurant(restaurant.id);
+  const { copiedId, copy } = useCopy();
 
-  const englishLabel = {
-    none: "No English",
-    basic: "Basic English",
-    good: "Good English",
-    excellent: "Excellent English",
-  }[restaurant.english_support_level];
+  // Determine which dishes are "must try"
+  const mustOrderIds = new Set(restaurant.must_order_dish_ids || []);
 
   return (
-    <div className="pb-10">
-      {/* Back */}
-      <Link
-        href={`/city/${city?.slug}`}
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-5 touch-manipulation active:scale-95"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        {city?.name_en}
-      </Link>
+    <div className="min-h-[100dvh] bg-white">
+      {/* Top bar */}
+      <div className="sticky top-0 z-20 bg-white px-4 py-3">
+        <button
+          onClick={() => router.back()}
+          className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
+        >
+          <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
+        </button>
+      </div>
 
-      {/* Header */}
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-bold text-foreground leading-tight">
-              {restaurant.name_en}
+      {/* Content */}
+      <div className="px-6 pt-2 pb-24">
+        {/* Restaurant info */}
+        <div className="flex flex-col gap-3">
+          {/* Name + copy */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-[22px] font-medium leading-[28px] text-[#0A0A0A]">
+              {restaurant.name_en} {restaurant.name_zh}
             </h1>
-            <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-              <span className="text-lg text-foreground/60">{restaurant.name_zh}</span>
-              <CopyButton text={restaurant.name_zh} label="Name" variant="inline" />
-            </div>
-          </div>
-          {restaurant.featured && (
-            <span className="shrink-0 rounded-md bg-foreground px-2 py-0.5 text-[10px] font-semibold text-background mt-1">
-              Pick
-            </span>
-          )}
-        </div>
-
-        <div className="mt-2.5 flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-          <span className="font-semibold text-foreground">{restaurant.price_band}</span>
-          <span className="text-border">·</span>
-          <span>{restaurant.cuisine_type}</span>
-          <span className="text-border">·</span>
-          <span className="inline-flex items-center gap-1">
-            <Globe className="h-3 w-3" />
-            {englishLabel}
-          </span>
-          <span className="text-border">·</span>
-          <span className="inline-flex items-center gap-1">
-            <MapPin className="h-3 w-3" />
-            {restaurant.area}
-          </span>
-        </div>
-      </div>
-
-      {/* Traveler helper — the key mobile feature */}
-      <div className="mt-5 rounded-lg border border-border bg-card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border bg-secondary/50">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Copy for Didi / Amap / WeChat
-          </p>
-        </div>
-        <div className="divide-y divide-border">
-          <div className="px-4 py-3 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-[10px] text-muted-foreground">Restaurant</p>
-              <p className="text-base font-medium text-foreground mt-0.5 truncate">{restaurant.name_zh}</p>
-            </div>
-            <CopyButton text={restaurant.name_zh} label="Name" />
-          </div>
-          <div className="px-4 py-3 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="text-[10px] text-muted-foreground">Address</p>
-              <p className="text-sm font-medium text-foreground mt-0.5">{restaurant.address_zh}</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{restaurant.address_en}</p>
-            </div>
-            <CopyButton text={restaurant.address_zh} label="Address" />
-          </div>
-        </div>
-      </div>
-
-      {/* Why go */}
-      <div className="mt-5">
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {restaurant.why_go}
-        </p>
-      </div>
-
-      {/* Tags */}
-      {restaurant.best_for.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1">
-          {restaurant.best_for.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground"
+            <button
+              onClick={() => copy(restaurant.name_zh, "name")}
+              className="shrink-0 touch-manipulation active:scale-95"
             >
-              {tag}
-            </span>
-          ))}
-        </div>
-      )}
+              {copiedId === "name" ? (
+                <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+              ) : (
+                <CopyIcon />
+              )}
+            </button>
+          </div>
 
-      {/* What to order */}
-      <div className="mt-6">
-        <h2 className="text-sm font-semibold text-foreground">What to order</h2>
-        <div className="mt-3 space-y-2">
-          {recs.map((rec) => (
-            <DishCard
-              key={rec.dish_id}
-              dish={rec.dish}
-              recommendation={rec.why_this_version}
-            />
-          ))}
+          {/* Address + copy */}
+          <div className="flex items-center gap-2">
+            <p className="text-[14px] font-normal leading-[18px] text-[#3D3F40]">
+              {restaurant.address_zh}
+            </p>
+            <button
+              onClick={() => copy(restaurant.address_zh, "address")}
+              className="shrink-0 touch-manipulation active:scale-95"
+            >
+              {copiedId === "address" ? (
+                <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+              ) : (
+                <CopyIcon />
+              )}
+            </button>
+          </div>
+
+          {/* View in map */}
+          <button
+            onClick={() => {
+              // Navigate to map tab with this city
+              router.push("/");
+            }}
+            className="text-[14px] font-medium leading-[18px] text-[#717375] underline text-left w-fit touch-manipulation"
+          >
+            View in map
+          </button>
+        </div>
+
+        {/* Food recommendations */}
+        <h2 className="mt-6 text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
+          Food recommendations
+        </h2>
+
+        <div className="mt-6 flex flex-col gap-3">
+          {recs.map((rec) => {
+            const dish = rec.dish;
+            const isMustTry = mustOrderIds.has(dish.id);
+
+            return (
+              <div
+                key={rec.dish_id}
+                className="rounded-[12px] border border-[#E4E9EC] p-[14px] flex flex-col gap-2"
+              >
+                {/* Dish name row */}
+                <div className="flex flex-col gap-[2px]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <p className="text-[14px] font-medium text-[#0A0A0A]">
+                        {dish.name_en} {dish.name_zh}
+                      </p>
+                      <button
+                        onClick={() => speakChinese(dish.name_zh)}
+                        className="shrink-0 touch-manipulation active:scale-95"
+                      >
+                        <Volume2 className="h-[14px] w-[14px] text-[#717375]" />
+                      </button>
+                    </div>
+                    {isMustTry && (
+                      <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#FFF4F4] px-2 py-1 text-[9px] font-medium text-[#A1341B]">
+                        <Sparkles className="h-3 w-3" />
+                        MUST TRY
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[12px] font-normal text-[#717375]">
+                    {dish.pinyin}
+                  </p>
+                </div>
+
+                {/* Description */}
+                <p className="text-[12px] font-normal text-[#717375] leading-normal">
+                  {dish.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
+  );
+}
+
+/** Small copy icon matching the Figma design (two overlapping rectangles) */
+function CopyIcon() {
+  return (
+    <Copy className="h-4 w-4 text-[#717375]" />
   );
 }
