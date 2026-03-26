@@ -15,7 +15,9 @@ import { CityDetailPage } from "./CityDetailPage";
 const mapCities = cities.filter((c) => c.slug !== "furong");
 
 export function HomePage() {
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const defaultCity = cities.find((c) => c.slug === "chongqing") || cities[0];
+  const [selectedCity, setSelectedCity] = useState<City>(defaultCity);
+  const [showCityDetail, setShowCityDetail] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "map">("home");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -23,6 +25,7 @@ export function HomePage() {
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
+    setShowCityDetail(true);
     setActiveTab("home");
     setShowCityPicker(false);
   };
@@ -138,8 +141,8 @@ export function HomePage() {
 
       {/* ===== MOBILE ===== */}
       <div className="lg:hidden flex flex-col h-full">
-        {/* Home tab */}
-        {activeTab === "home" && !selectedCity && (
+        {/* Home tab — city grid */}
+        {activeTab === "home" && !showCityDetail && (
           <div className="flex-1 overflow-y-auto pb-20">
             <div className="px-6 pt-[38px] pb-6">
               <p className="text-[12px] font-normal leading-[16px] text-[#5D5F61]">
@@ -156,10 +159,10 @@ export function HomePage() {
         )}
 
         {/* City detail page (Home tab with city selected) */}
-        {activeTab === "home" && selectedCity && (
+        {activeTab === "home" && showCityDetail && (
           <CityDetailPage
             city={selectedCity}
-            onBack={() => setSelectedCity(null)}
+            onBack={() => setShowCityDetail(false)}
             onCitySwitch={handleCitySelect}
             showCityPicker={showCityPicker}
             onToggleCityPicker={() => setShowCityPicker(!showCityPicker)}
@@ -168,7 +171,7 @@ export function HomePage() {
         )}
 
         {/* Map tab */}
-        {activeTab === "map" && selectedCity && (
+        {activeTab === "map" && (
           <div className="flex-1 relative overflow-hidden">
             {/* Full-screen map background */}
             <div className="absolute inset-0">
@@ -221,16 +224,6 @@ export function HomePage() {
                   <CityPanel city={selectedCity} variant="sheet" />
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Map tab without city — redirect to home */}
-        {activeTab === "map" && !selectedCity && (
-          <div className="flex-1 flex items-center justify-center pb-20">
-            <div className="text-center px-6">
-              <p className="text-[16px] font-medium text-[#0A0A0A]">Select a city first</p>
-              <p className="mt-1 text-[14px] text-[#717375]">Pick a city from the Home tab to see it on the map.</p>
             </div>
           </div>
         )}
