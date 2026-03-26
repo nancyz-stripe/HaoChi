@@ -146,9 +146,9 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               >
                 {/* Dish name row */}
                 <div className="flex flex-col gap-[2px]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <p className="text-[14px] font-medium text-[#0A0A0A]">
+                  <div className="flex items-center justify-between gap-6">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <p className="text-[14px] font-medium text-[#0A0A0A] flex-1 min-w-0">
                         {dish.name_en} {dish.name_zh}
                       </p>
                       <button
@@ -159,7 +159,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                       </button>
                     </div>
                     {isMustTry && (
-                      <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[9px] font-medium text-[#1A2C44]">
+                      <span className="shrink-0 inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[9px] font-medium text-[#1A2C44]">
                         <Sparkles className="h-3 w-3" />
                         MUST TRY
                       </span>
