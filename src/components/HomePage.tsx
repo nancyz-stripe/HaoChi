@@ -235,7 +235,6 @@ export function HomePage() {
     if (activeTab === "map") {
       params.set("tab", "map");
       params.set("city", selectedCity.slug);
-      if (selectedRestaurantId) params.set("restaurant", selectedRestaurantId);
       const url = `/?${params.toString()}`;
       if (prev.tab !== "map") {
         window.history.pushState(null, "", url);
@@ -258,7 +257,7 @@ export function HomePage() {
     }
 
     prevState.current = { tab: activeTab, cityDetail: showCityDetail, city: selectedCity.slug };
-  }, [activeTab, showCityDetail, selectedCity.slug, selectedRestaurantId]);
+  }, [activeTab, showCityDetail, selectedCity.slug]);
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
