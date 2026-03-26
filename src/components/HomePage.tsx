@@ -10,12 +10,12 @@ import { ArrowLeft, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { BottomNav } from "./BottomNav";
 import { CityGrid } from "./CityGrid";
+import { CityDetailPage } from "./CityDetailPage";
 
 const mapCities = cities.filter((c) => c.slug !== "furong");
 
 export function HomePage() {
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
-  const [showPanel, setShowPanel] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "map">("home");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -23,8 +23,7 @@ export function HomePage() {
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
-    setActiveTab("map");
-    setShowPanel(true);
+    setActiveTab("home");
     setShowCityPicker(false);
   };
 
@@ -46,6 +45,35 @@ export function HomePage() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [showCityPicker]);
+
+  const cityPickerPopup = (
+    <div
+      ref={pickerRef}
+      className="bg-white rounded-[24px] overflow-hidden"
+      style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.24)" }}
+    >
+      <div className="px-6 py-6">
+        <div className="flex flex-col gap-2">
+          {mapCities.map((city) => {
+            const isSelected = selectedCity?.id === city.id;
+            return (
+              <button
+                key={city.id}
+                onClick={() => handleCitySelect(city)}
+                className={`w-full rounded-[20px] px-4 py-3 text-[14px] font-normal leading-[18px] text-[#0A0A0A] touch-manipulation transition-colors ${
+                  isSelected
+                    ? "bg-[#F7F7F7] border-2 border-[#0A0A0A]"
+                    : "bg-white border border-[#D8DCE0]"
+                }`}
+              >
+                {city.name_en} {city.name_zh}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex h-[100dvh] flex-col bg-white">
@@ -111,7 +139,7 @@ export function HomePage() {
       {/* ===== MOBILE ===== */}
       <div className="lg:hidden flex flex-col h-full">
         {/* Home tab */}
-        {activeTab === "home" && (
+        {activeTab === "home" && !selectedCity && (
           <div className="flex-1 overflow-y-auto pb-20">
             <div className="px-6 pt-[38px] pb-6">
               <p className="text-[12px] font-normal leading-[16px] text-[#5D5F61]">
@@ -127,8 +155,20 @@ export function HomePage() {
           </div>
         )}
 
+        {/* City detail page (Home tab with city selected) */}
+        {activeTab === "home" && selectedCity && (
+          <CityDetailPage
+            city={selectedCity}
+            onBack={() => setSelectedCity(null)}
+            onCitySwitch={handleCitySelect}
+            showCityPicker={showCityPicker}
+            onToggleCityPicker={() => setShowCityPicker(!showCityPicker)}
+            cityPickerElement={cityPickerPopup}
+          />
+        )}
+
         {/* Map tab */}
-        {activeTab === "map" && (
+        {activeTab === "map" && selectedCity && (
           <div className="flex-1 relative overflow-hidden">
             {/* Full-screen map background */}
             <div className="absolute inset-0">
@@ -143,76 +183,55 @@ export function HomePage() {
             {/* Top bar */}
             <div className="absolute top-0 left-0 right-0 z-[1000] bg-white flex items-center justify-between px-4 py-3">
               <button
-                onClick={() => {
-                  setSelectedCity(null);
-                  setShowCityPicker(false);
-                  setActiveTab("home");
-                }}
+                onClick={() => setActiveTab("home")}
                 className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
               >
                 <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
               </button>
-              {selectedCity && (
-                <button
-                  onClick={() => setShowCityPicker(!showCityPicker)}
-                  className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
-                >
-                  <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
-                    {selectedCity.name_en} {selectedCity.name_zh}
-                  </span>
-                  <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
-                </button>
-              )}
+              <button
+                onClick={() => setShowCityPicker(!showCityPicker)}
+                className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
+              >
+                <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+                  {selectedCity.name_en} {selectedCity.name_zh}
+                </span>
+                <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
+              </button>
             </div>
 
-            {/* City picker popup */}
+            {/* City picker popup on map */}
             {showCityPicker && (
-              <div
-                ref={pickerRef}
-                className="absolute right-4 top-[60px] z-[1001] bg-white rounded-[24px] overflow-hidden"
-                style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.24)" }}
-              >
-                <div className="px-6 py-6">
-                  <div className="flex flex-col gap-2">
-                    {mapCities.map((city) => {
-                      const isSelected = selectedCity?.id === city.id;
-                      return (
-                        <button
-                          key={city.id}
-                          onClick={() => handleCitySelect(city)}
-                          className={`w-full rounded-[20px] px-4 py-3 text-[14px] font-normal leading-[18px] text-[#0A0A0A] touch-manipulation transition-colors ${
-                            isSelected
-                              ? "bg-[#F7F7F7] border-2 border-[#0A0A0A]"
-                              : "bg-white border border-[#D8DCE0]"
-                          }`}
-                        >
-                          {city.name_en} {city.name_zh}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+              <div className="absolute right-4 top-[60px] z-[1001]">
+                {cityPickerPopup}
               </div>
             )}
 
-            {/* Bottom sheet — scrollable, always shown */}
-            {selectedCity && showPanel && (
-              <div
-                className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
-                style={{ maxHeight: "calc(100% - 120px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
-              >
-                {/* Drag handle */}
-                <div className="flex items-center justify-center py-2 shrink-0">
-                  <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
-                </div>
-                {/* Scrollable content */}
-                <div className="overflow-y-auto flex-1 pb-24">
-                  <div className="px-6">
-                    <CityPanel city={selectedCity} variant="sheet" />
-                  </div>
+            {/* Bottom sheet */}
+            <div
+              className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
+              style={{ maxHeight: "calc(100% - 120px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
+            >
+              {/* Drag handle */}
+              <div className="flex items-center justify-center py-2 shrink-0">
+                <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
+              </div>
+              {/* Scrollable content */}
+              <div className="overflow-y-auto flex-1 pb-24">
+                <div className="px-6">
+                  <CityPanel city={selectedCity} variant="sheet" />
                 </div>
               </div>
-            )}
+            </div>
+          </div>
+        )}
+
+        {/* Map tab without city — redirect to home */}
+        {activeTab === "map" && !selectedCity && (
+          <div className="flex-1 flex items-center justify-center pb-20">
+            <div className="text-center px-6">
+              <p className="text-[16px] font-medium text-[#0A0A0A]">Select a city first</p>
+              <p className="mt-1 text-[14px] text-[#717375]">Pick a city from the Home tab to see it on the map.</p>
+            </div>
           </div>
         )}
 
@@ -221,11 +240,7 @@ export function HomePage() {
           activeTab={activeTab}
           onTabChange={(tab) => {
             setActiveTab(tab);
-            if (tab === "home") {
-              setSelectedCity(null);
-              setShowPanel(false);
-              setShowCityPicker(false);
-            }
+            setShowCityPicker(false);
           }}
         />
       </div>
