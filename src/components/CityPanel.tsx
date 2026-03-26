@@ -70,7 +70,6 @@ export function CityPanel({ city, variant = "full", selectedRestaurantId, onRest
               key={restaurant.id}
               restaurant={restaurant}
               selected={restaurant.id === selectedRestaurantId}
-              onClick={() => onRestaurantSelect?.(restaurant.id)}
             />
           ))}
         </div>

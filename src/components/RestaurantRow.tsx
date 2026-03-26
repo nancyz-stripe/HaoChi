@@ -21,12 +21,7 @@ export function RestaurantRow({ restaurant, selected, onClick }: RestaurantRowPr
   return (
     <Link
       href={`/city/${city?.slug}/restaurant/${restaurant.id}`}
-      onClick={(e) => {
-        if (onClick) {
-          e.preventDefault();
-          onClick();
-        }
-      }}
+      onClick={onClick}
       className={`block rounded-[12px] ${borderClass} p-[14px] touch-manipulation active:bg-[#F7F7F7] transition-colors`}
     >
       <div className="flex flex-col gap-[6px]">
