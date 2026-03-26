@@ -22,6 +22,7 @@ export function HomePage() {
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
+  const pickerToggleRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -62,7 +63,9 @@ export function HomePage() {
   useEffect(() => {
     if (!showCityPicker) return;
     function handleClick(e: MouseEvent) {
-      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (pickerRef.current && !pickerRef.current.contains(target) &&
+          pickerToggleRef.current && !pickerToggleRef.current.contains(target)) {
         setShowCityPicker(false);
       }
     }
@@ -188,6 +191,7 @@ export function HomePage() {
             showCityPicker={showCityPicker}
             onToggleCityPicker={() => setShowCityPicker(!showCityPicker)}
             cityPickerElement={cityPickerPopup}
+            pickerToggleRef={pickerToggleRef}
           />
         )}
 
@@ -214,6 +218,7 @@ export function HomePage() {
                 <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
               </button>
               <button
+                ref={pickerToggleRef}
                 onClick={() => setShowCityPicker(!showCityPicker)}
                 className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
               >

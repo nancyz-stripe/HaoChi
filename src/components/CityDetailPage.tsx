@@ -4,6 +4,7 @@ import { City } from "@/types";
 import { getFirstMealDishes, getRestaurantsByCity } from "@/data";
 import { RestaurantRow } from "./RestaurantRow";
 import { ArrowLeft, ChevronDown } from "lucide-react";
+import { RefObject } from "react";
 
 const cityImages: Record<string, string> = {
   chongqing: "/images/chongqing.png",
@@ -46,6 +47,7 @@ interface CityDetailPageProps {
   showCityPicker: boolean;
   onToggleCityPicker: () => void;
   cityPickerElement: React.ReactNode;
+  pickerToggleRef?: RefObject<HTMLButtonElement | null>;
 }
 
 export function CityDetailPage({
@@ -55,6 +57,7 @@ export function CityDetailPage({
   showCityPicker,
   onToggleCityPicker,
   cityPickerElement,
+  pickerToggleRef,
 }: CityDetailPageProps) {
   const cityRestaurants = getRestaurantsByCity(city.id);
   const dishes = cityDishCards[city.slug] || [];
@@ -85,6 +88,7 @@ export function CityDetailPage({
 
         {/* City selector pill */}
         <button
+          ref={pickerToggleRef}
           onClick={onToggleCityPicker}
           className="absolute top-3 right-4 bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
         >
