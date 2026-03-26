@@ -21,11 +21,13 @@ const SNAP_FULL = 85; // nearly full screen
 
 function BottomSheet({ children }: { children: React.ReactNode }) {
   const sheetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
-  const dragState = useRef<{ startY: number; startHeight: number } | null>(null);
+  const dragState = useRef<{ startY: number; startHeight: number; source: "handle" | "content" } | null>(null);
+  const isFullyExpanded = sheetHeight >= SNAP_FULL - 1;
 
-  const handleDragStart = useCallback((clientY: number) => {
-    dragState.current = { startY: clientY, startHeight: sheetHeight };
+  const handleDragStart = useCallback((clientY: number, source: "handle" | "content") => {
+    dragState.current = { startY: clientY, startHeight: sheetHeight, source };
   }, [sheetHeight]);
 
   const handleDragMove = useCallback((clientY: number) => {
@@ -38,7 +40,6 @@ function BottomSheet({ children }: { children: React.ReactNode }) {
 
   const handleDragEnd = useCallback(() => {
     if (!dragState.current) return;
-    // Snap to nearest point
     const snaps = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
     let closest = snaps[0];
     let minDist = Math.abs(sheetHeight - snaps[0]);
@@ -56,21 +57,86 @@ function BottomSheet({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const onPointerMove = (e: PointerEvent) => handleDragMove(e.clientY);
     const onPointerUp = () => handleDragEnd();
-    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientY);
-    const onTouchEnd = () => handleDragEnd();
 
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd);
 
     return () => {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
     };
   }, [handleDragMove, handleDragEnd]);
+
+  // Touch handling on the content area: expand sheet first, then scroll
+  useEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    let touchStartY = 0;
+    let startHeight = 0;
+    let isDraggingSheet = false;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+      startHeight = sheetHeight;
+      isDraggingSheet = false;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const currentY = e.touches[0].clientY;
+      const deltaY = touchStartY - currentY;
+      const scrollTop = content.scrollTop;
+      const isAtTop = scrollTop <= 0;
+      const isSwipingUp = deltaY > 0;
+      const isSwipingDown = deltaY < 0;
+      const currentlyFull = startHeight >= SNAP_FULL - 1;
+
+      // Swiping up and sheet not fully expanded → expand sheet
+      if (isSwipingUp && !currentlyFull && !isDraggingSheet) {
+        isDraggingSheet = true;
+      }
+
+      // Swiping down and content is at the top → collapse sheet
+      if (isSwipingDown && isAtTop && !isDraggingSheet) {
+        isDraggingSheet = true;
+      }
+
+      if (isDraggingSheet) {
+        e.preventDefault();
+        const deltaPercent = (deltaY / window.innerHeight) * 100;
+        const newHeight = Math.min(SNAP_FULL, Math.max(10, startHeight + deltaPercent));
+        setSheetHeight(newHeight);
+      }
+    };
+
+    const onTouchEnd = () => {
+      if (isDraggingSheet) {
+        // Snap
+        const snaps = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
+        let closest = snaps[0];
+        let minDist = Infinity;
+        for (const snap of snaps) {
+          const dist = Math.abs(sheetHeight - snap);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = snap;
+          }
+        }
+        setSheetHeight(closest);
+        isDraggingSheet = false;
+      }
+    };
+
+    content.addEventListener("touchstart", onTouchStart, { passive: true });
+    content.addEventListener("touchmove", onTouchMove, { passive: false });
+    content.addEventListener("touchend", onTouchEnd);
+
+    return () => {
+      content.removeEventListener("touchstart", onTouchStart);
+      content.removeEventListener("touchmove", onTouchMove);
+      content.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [sheetHeight]);
 
   return (
     <div
@@ -86,13 +152,23 @@ function BottomSheet({ children }: { children: React.ReactNode }) {
       {/* Drag handle */}
       <div
         className="flex items-center justify-center py-3 shrink-0 cursor-grab active:cursor-grabbing touch-none"
-        onPointerDown={(e) => handleDragStart(e.clientY)}
-        onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
+        onPointerDown={(e) => handleDragStart(e.clientY, "handle")}
+        onTouchStart={(e) => {
+          handleDragStart(e.touches[0].clientY, "handle");
+        }}
+        onTouchMove={(e) => {
+          e.preventDefault();
+          handleDragMove(e.touches[0].clientY);
+        }}
+        onTouchEnd={() => handleDragEnd()}
       >
         <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
       </div>
-      {/* Scrollable content */}
-      <div className="overflow-y-auto flex-1 pb-24">
+      {/* Content — scrollable only when fully expanded */}
+      <div
+        ref={contentRef}
+        className={`flex-1 pb-24 ${isFullyExpanded ? "overflow-y-auto" : "overflow-hidden"}`}
+      >
         {children}
       </div>
     </div>
