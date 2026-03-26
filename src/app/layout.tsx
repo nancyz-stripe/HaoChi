@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Hao Chi - Explore China with Nancy's guide!",
+  title: "Hao Chi! Eat around China with Nancy",
   description:
     "Discover authentic local food in China. Find the best restaurants, know what to order, and navigate with confidence.",
   openGraph: {
-    title: "Hao Chi - Explore China with Nancy's guide!",
+    title: "Hao Chi! Eat around China with Nancy",
     description:
       "Discover authentic local food in China. Find the best restaurants, know what to order, and navigate with confidence.",
   },
