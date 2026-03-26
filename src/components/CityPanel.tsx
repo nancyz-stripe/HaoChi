@@ -10,15 +10,17 @@ import {
 } from "@/data";
 import { DishCard } from "./DishCard";
 import { RestaurantCard } from "./RestaurantCard";
+import { RestaurantRow } from "./RestaurantRow";
 import { useState } from "react";
 
 interface CityPanelProps {
   city: City;
+  variant?: "full" | "sheet";
 }
 
 type DishFilter = "all" | "first-timer" | "mild" | "adventurous";
 
-export function CityPanel({ city }: CityPanelProps) {
+export function CityPanel({ city, variant = "full" }: CityPanelProps) {
   const [dishFilter, setDishFilter] = useState<DishFilter>("all");
 
   const signatureDishes = getSignatureDishes(city);
@@ -45,6 +47,23 @@ export function CityPanel({ city }: CityPanelProps) {
     { key: "adventurous", label: "Adventurous" },
   ];
 
+  // Sheet variant: simplified restaurant list for bottom sheet on map
+  if (variant === "sheet") {
+    return (
+      <div>
+        <h2 className="text-base font-semibold text-foreground mt-2">
+          Top restaurants in {city.name_en}
+        </h2>
+        <div className="mt-4 space-y-0 divide-y divide-border">
+          {cityRestaurants.map((restaurant) => (
+            <RestaurantRow key={restaurant.id} restaurant={restaurant} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Full variant: complete city view
   return (
     <div className="space-y-6 pb-8">
       {/* City header */}
