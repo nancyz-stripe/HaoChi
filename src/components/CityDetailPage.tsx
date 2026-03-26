@@ -165,13 +165,16 @@ export function CityDetailPage({
           <div className="flex-1 overflow-y-auto px-6 pb-8">
             <div className="flex flex-col gap-[21px]">
               {dishes.map((dish) => (
-                <div key={dish.label} className="w-full h-[228px] rounded-[4px] overflow-hidden">
+                <div key={dish.label} className="relative w-full h-[228px] rounded-[4px] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={dish.image}
                     alt={dish.label}
                     className="h-full w-full object-cover"
                   />
+                  <span className="absolute bottom-2 left-2 bg-[#F4F7FA] px-2 py-1 rounded-[4px] text-[9px] font-medium text-[#1A2C44] whitespace-nowrap">
+                    {dish.label}
+                  </span>
                 </div>
               ))}
             </div>
