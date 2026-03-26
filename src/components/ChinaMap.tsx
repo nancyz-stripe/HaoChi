@@ -210,9 +210,9 @@ export function ChinaMap({
           className: "",
           html: `<div style="
             width:${dotSize}px;height:${dotSize}px;
-            background:#0A0A0A;
+            background:#1A2C44;
             border-radius:50%;
-            box-shadow:0 0 0 ${isSelected ? 3 : 2}px rgba(10,10,10,${isSelected ? 0.3 : 0.2});
+            box-shadow:0 0 0 ${isSelected ? 3 : 2}px rgba(26,44,68,${isSelected ? 0.3 : 0.2});
             cursor:pointer;
             transition:all 0.2s;
           "></div>`,
