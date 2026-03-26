@@ -209,10 +209,12 @@ export function HomePage() {
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
-    setShowCityDetail(true);
-    setActiveTab("home");
     setShowCityPicker(false);
     setSelectedRestaurantId(null);
+    if (activeTab !== "map") {
+      setShowCityDetail(true);
+      setActiveTab("home");
+    }
   };
 
   const handleRestaurantSelect = (restaurant: Restaurant) => {
