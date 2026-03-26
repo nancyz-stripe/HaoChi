@@ -2,7 +2,7 @@
 
 import { Restaurant } from "@/types";
 import { getRecommendationsForRestaurant } from "@/data";
-import { ArrowLeft, Copy, Volume2, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, Volume2, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cities } from "@/data/cities";
 import { useState, useCallback } from "react";
@@ -65,6 +65,8 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
   const city = cities.find((c) => c.id === restaurant.city_id);
   const recs = getRecommendationsForRestaurant(restaurant.id);
   const { copiedId, copy } = useCopy();
+
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
 
   // Determine which dishes are "must try"
   const mustOrderIds = new Set(restaurant.must_order_dish_ids || []);
@@ -148,14 +150,17 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 {/* Top row: image + content */}
                 <div className="flex gap-2 items-start">
                   {/* Dish image */}
-                  <div className="h-[84px] w-[88px] shrink-0 rounded-[3.5px] overflow-hidden bg-neutral-100">
+                  <button
+                    onClick={() => setEnlargedImage("/images/dishes/cq-hotpot.png")}
+                    className="h-[84px] w-[88px] shrink-0 rounded-[3.5px] overflow-hidden bg-neutral-100 touch-manipulation"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/dishes/cq-hotpot.png"
                       alt={dish.name_en}
                       className="h-full w-full object-cover"
                     />
-                  </div>
+                  </button>
                   {/* Content */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
                     {isMustTry && (
@@ -193,6 +198,35 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
           })}
         </div>
       </div>
+      {/* Enlarged dish image overlay */}
+      {enlargedImage && (
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/30"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div
+            className="bg-white rounded-[24px] py-6 px-6 flex flex-col items-center"
+            style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.24)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-[281px] h-[266px] rounded-[3.5px] overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={enlargedImage}
+                alt="Dish"
+                className="h-full w-full object-cover"
+              />
+              <button
+                onClick={() => setEnlargedImage(null)}
+                className="absolute top-3 right-3 rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
+              >
+                <X className="h-4 w-4 text-[#0A0A0A]" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <BottomNav
         activeTab="home"
         onTabChange={(tab) => {
