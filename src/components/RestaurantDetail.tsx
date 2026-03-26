@@ -94,7 +94,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "name" ? (
-                <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#E3FFE2] px-1 py-[2px] text-[8px] font-medium text-[#1F841B]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
@@ -111,7 +111,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "address" ? (
-                <span className="text-[11px] text-emerald-600 font-medium">Copied</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#E3FFE2] px-1 py-[2px] text-[8px] font-medium text-[#1F841B]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
@@ -121,8 +121,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
           {/* View in map */}
           <button
             onClick={() => {
-              // Navigate to map tab with this city
-              router.push("/");
+              router.push(`/?tab=map&city=${city?.slug}&restaurant=${restaurant.id}`);
             }}
             className="text-[14px] font-medium leading-[18px] text-[#717375] underline text-left w-fit touch-manipulation"
           >

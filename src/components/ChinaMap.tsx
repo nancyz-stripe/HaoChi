@@ -9,6 +9,7 @@ import type L from "leaflet";
 
 interface ChinaMapProps {
   selectedCity?: City | null;
+  selectedRestaurantId?: string | null;
   onCitySelect: (city: City) => void;
   onRestaurantSelect?: (restaurant: Restaurant) => void;
   className?: string;
@@ -43,6 +44,7 @@ function toCoord(
 
 export function ChinaMap({
   selectedCity,
+  selectedRestaurantId,
   onCitySelect,
   onRestaurantSelect,
   className,
@@ -201,17 +203,21 @@ export function ChinaMap({
       );
 
       cityRestaurants.forEach((restaurant) => {
+        const isSelected = restaurant.id === selectedRestaurantId;
+        const dotSize = isSelected ? 14 : 7;
+
         const icon = leaflet.divIcon({
           className: "",
           html: `<div style="
-            width:7px;height:7px;
+            width:${dotSize}px;height:${dotSize}px;
             background:#0A0A0A;
             border-radius:50%;
-            box-shadow:0 0 0 2px rgba(10,10,10,0.2);
+            box-shadow:0 0 0 ${isSelected ? 3 : 2}px rgba(10,10,10,${isSelected ? 0.3 : 0.2});
             cursor:pointer;
+            transition:all 0.2s;
           "></div>`,
-          iconSize: [7, 7],
-          iconAnchor: [3.5, 3.5],
+          iconSize: [dotSize, dotSize],
+          iconAnchor: [dotSize / 2, dotSize / 2],
         });
 
         const [lat, lng] = toCoord(restaurant.lat, restaurant.lng, useGcj02);
@@ -233,7 +239,7 @@ export function ChinaMap({
     }
 
     markersRef.current = newMarkers;
-  }, [selectedCity, ready, onCitySelect, onRestaurantSelect]);
+  }, [selectedCity, selectedRestaurantId, ready, onCitySelect, onRestaurantSelect]);
 
   // Fly to restaurant bounds when city changes
   useEffect(() => {

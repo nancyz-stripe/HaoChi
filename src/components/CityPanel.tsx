@@ -16,11 +16,13 @@ import { useState } from "react";
 interface CityPanelProps {
   city: City;
   variant?: "full" | "sheet";
+  selectedRestaurantId?: string | null;
+  onRestaurantSelect?: (restaurantId: string) => void;
 }
 
 type DishFilter = "all" | "first-timer" | "mild" | "adventurous";
 
-export function CityPanel({ city, variant = "full" }: CityPanelProps) {
+export function CityPanel({ city, variant = "full", selectedRestaurantId, onRestaurantSelect }: CityPanelProps) {
   const [dishFilter, setDishFilter] = useState<DishFilter>("all");
 
   const signatureDishes = getSignatureDishes(city);
@@ -49,14 +51,27 @@ export function CityPanel({ city, variant = "full" }: CityPanelProps) {
 
   // Sheet variant: simplified restaurant list for bottom sheet on map
   if (variant === "sheet") {
+    // Sort selected restaurant to top
+    const sortedRestaurants = selectedRestaurantId
+      ? [
+          ...cityRestaurants.filter((r) => r.id === selectedRestaurantId),
+          ...cityRestaurants.filter((r) => r.id !== selectedRestaurantId),
+        ]
+      : cityRestaurants;
+
     return (
       <div>
         <h2 className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
-          Top restaurants in {city.name_en}
+          Restaurants in {city.name_en}
         </h2>
         <div className="mt-3 flex flex-col gap-3">
-          {cityRestaurants.map((restaurant) => (
-            <RestaurantRow key={restaurant.id} restaurant={restaurant} />
+          {sortedRestaurants.map((restaurant) => (
+            <RestaurantRow
+              key={restaurant.id}
+              restaurant={restaurant}
+              selected={restaurant.id === selectedRestaurantId}
+              onClick={() => onRestaurantSelect?.(restaurant.id)}
+            />
           ))}
         </div>
       </div>

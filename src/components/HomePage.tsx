@@ -7,7 +7,7 @@ import { CityPanel } from "./CityPanel";
 import { CitySelector } from "./CitySelector";
 import { cities } from "@/data/cities";
 import { ArrowLeft, ChevronDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BottomNav } from "./BottomNav";
 import { CityGrid } from "./CityGrid";
 import { CityDetailPage } from "./CityDetailPage";
@@ -20,14 +20,35 @@ export function HomePage() {
   const [showCityDetail, setShowCityDetail] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "map">("home");
   const [showCityPicker, setShowCityPicker] = useState(false);
+  const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
   const pickerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Handle URL params (e.g. from "View in map" on restaurant page)
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    const citySlug = searchParams.get("city");
+    const restaurantId = searchParams.get("restaurant");
+
+    if (tab === "map") {
+      setActiveTab("map");
+      if (citySlug) {
+        const city = cities.find((c) => c.slug === citySlug);
+        if (city) setSelectedCity(city);
+      }
+      if (restaurantId) {
+        setSelectedRestaurantId(restaurantId);
+      }
+    }
+  }, [searchParams]);
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
     setShowCityDetail(true);
     setActiveTab("home");
     setShowCityPicker(false);
+    setSelectedRestaurantId(null);
   };
 
   const handleRestaurantSelect = (restaurant: Restaurant) => {
@@ -177,8 +198,9 @@ export function HomePage() {
             <div className="absolute inset-0">
               <ChinaMap
                 selectedCity={selectedCity}
+                selectedRestaurantId={selectedRestaurantId}
                 onCitySelect={handleCitySelect}
-                onRestaurantSelect={handleRestaurantSelect}
+                onRestaurantSelect={(restaurant) => setSelectedRestaurantId(restaurant.id)}
                 className="h-full"
               />
             </div>
@@ -221,7 +243,12 @@ export function HomePage() {
               {/* Scrollable content */}
               <div className="overflow-y-auto flex-1 pb-24">
                 <div className="px-6">
-                  <CityPanel city={selectedCity} variant="sheet" />
+                  <CityPanel
+                    city={selectedCity}
+                    variant="sheet"
+                    selectedRestaurantId={selectedRestaurantId}
+                    onRestaurantSelect={(id) => setSelectedRestaurantId(id)}
+                  />
                 </div>
               </div>
             </div>
