@@ -94,7 +94,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "name" ? (
-                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[8px] font-medium text-[#1A2C44]">Copied!</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[10px] font-medium text-[#1A2C44]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
@@ -111,7 +111,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               className="shrink-0 touch-manipulation active:scale-95"
             >
               {copiedId === "address" ? (
-                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[8px] font-medium text-[#1A2C44]">Copied!</span>
+                <span className="inline-flex items-center rounded-[4px] bg-[#F4F7FA] px-1 py-[2px] text-[10px] font-medium text-[#1A2C44]">Copied!</span>
               ) : (
                 <CopyIcon />
               )}
