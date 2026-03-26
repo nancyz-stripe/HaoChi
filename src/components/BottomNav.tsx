@@ -23,7 +23,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               className="h-6 w-6"
               style={{
                 color: activeTab === "home" ? "#1A2C44" : "#667691",
-                fill: activeTab === "home" ? "#1A2C44" : "none",
+                fill: "none",
                 strokeWidth: 1.5,
               }}
             />
@@ -51,7 +51,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               className="h-6 w-6"
               style={{
                 color: activeTab === "map" ? "#1A2C44" : "#667691",
-                fill: activeTab === "map" ? "#1A2C44" : "none",
+                fill: "none",
                 strokeWidth: 1.5,
               }}
             />
