@@ -192,7 +192,7 @@ export function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Handle URL params (e.g. from "View in map" on restaurant page)
+  // Handle URL params on load (e.g. from "View in map" or browser back)
   const initializedFromUrl = useRef(false);
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -210,35 +210,57 @@ export function HomePage() {
       if (restaurantId) {
         setSelectedRestaurantId(restaurantId);
       }
+    } else if (citySlug) {
+      // Restore city detail page (e.g. browser back from restaurant)
+      initializedFromUrl.current = true;
+      const city = cities.find((c) => c.slug === citySlug);
+      if (city) {
+        setSelectedCity(city);
+        setShowCityDetail(true);
+        setActiveTab("home");
+      }
     }
   }, [searchParams]);
 
-  // Sync URL when switching to map tab so browser back preserves state
-  const prevTab = useRef(activeTab);
+  // Sync URL to browser history so back button works across navigations
+  const prevState = useRef({ tab: activeTab, cityDetail: showCityDetail, city: selectedCity.slug });
   useEffect(() => {
     if (initializedFromUrl.current) {
       initializedFromUrl.current = false;
-      prevTab.current = activeTab;
+      prevState.current = { tab: activeTab, cityDetail: showCityDetail, city: selectedCity.slug };
       return;
     }
+
+    const prev = prevState.current;
     const params = new URLSearchParams();
+
     if (activeTab === "map") {
       params.set("tab", "map");
       params.set("city", selectedCity.slug);
       if (selectedRestaurantId) params.set("restaurant", selectedRestaurantId);
       const url = `/?${params.toString()}`;
-      if (prevTab.current !== "map") {
-        // Switching to map tab — push so there's a history entry
+      if (prev.tab !== "map") {
         window.history.pushState(null, "", url);
       } else {
-        // Already on map, just update params (city/restaurant change)
         window.history.replaceState(null, "", url);
       }
-    } else if (activeTab === "home" && prevTab.current === "map") {
-      window.history.replaceState(null, "", "/");
+    } else if (activeTab === "home" && showCityDetail) {
+      const url = `/?city=${selectedCity.slug}`;
+      if (!prev.cityDetail) {
+        // Entering city detail — push new history entry
+        window.history.pushState(null, "", url);
+      } else if (prev.city !== selectedCity.slug) {
+        // Switching city within detail — replace
+        window.history.replaceState(null, "", url);
+      }
+    } else if (activeTab === "home" && !showCityDetail) {
+      if (prev.cityDetail || prev.tab === "map") {
+        window.history.replaceState(null, "", "/");
+      }
     }
-    prevTab.current = activeTab;
-  }, [activeTab, selectedCity.slug, selectedRestaurantId]);
+
+    prevState.current = { tab: activeTab, cityDetail: showCityDetail, city: selectedCity.slug };
+  }, [activeTab, showCityDetail, selectedCity.slug, selectedRestaurantId]);
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
