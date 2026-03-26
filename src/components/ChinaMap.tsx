@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { cities } from "@/data/cities";
 import { restaurants } from "@/data/restaurants";
 import { City, Restaurant } from "@/types";
+import { isLikelyInChina, wgs84ToGcj02 } from "@/lib/geo";
 import type L from "leaflet";
 
 interface ChinaMapProps {
@@ -13,14 +14,31 @@ interface ChinaMapProps {
   className?: string;
 }
 
-function getRestaurantBounds(cityId: string, leaflet: typeof L) {
+function getRestaurantBounds(
+  cityId: string,
+  leaflet: typeof L,
+  useGcj02: boolean
+) {
   const cityRestaurants = restaurants.filter((r) => r.city_id === cityId);
   if (cityRestaurants.length === 0) return null;
 
   const bounds = leaflet.latLngBounds(
-    cityRestaurants.map((r) => [r.lat, r.lng] as [number, number])
+    cityRestaurants.map((r) => {
+      const [lat, lng] = useGcj02
+        ? wgs84ToGcj02(r.lat, r.lng)
+        : [r.lat, r.lng];
+      return [lat, lng] as [number, number];
+    })
   );
   return bounds;
+}
+
+function toCoord(
+  lat: number,
+  lng: number,
+  useGcj02: boolean
+): [number, number] {
+  return useGcj02 ? wgs84ToGcj02(lat, lng) : [lat, lng];
 }
 
 export function ChinaMap({
@@ -34,6 +52,7 @@ export function ChinaMap({
   const [ready, setReady] = useState(false);
   const markersRef = useRef<L.Marker[]>([]);
   const leafletRef = useRef<typeof L | null>(null);
+  const useGcj02Ref = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -46,7 +65,10 @@ export function ChinaMap({
 
       leafletRef.current = leaflet.default;
 
-      // Start with a default view; we'll fitBounds after if a city is selected
+      // Detect region for tile provider selection
+      const inChina = isLikelyInChina();
+      useGcj02Ref.current = inChina;
+
       const map = leaflet.default.map(containerRef.current, {
         center: { lat: 33.5, lng: 108.0 },
         zoom: 5,
@@ -54,19 +76,34 @@ export function ChinaMap({
         attributionControl: false,
       });
 
-      leaflet.default
-        .tileLayer(
-          "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
-          { maxZoom: 19 }
-        )
-        .addTo(map);
+      if (inChina) {
+        // Amap (Gaode) tiles — works reliably in China, uses GCJ-02
+        leaflet.default
+          .tileLayer(
+            "https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+            {
+              maxZoom: 18,
+              subdomains: "1234",
+              attribution: "&copy; AutoNavi",
+            }
+          )
+          .addTo(map);
+      } else {
+        // CartoDB Positron tiles — clean, minimal style for international users
+        leaflet.default
+          .tileLayer(
+            "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+            { maxZoom: 19 }
+          )
+          .addTo(map);
 
-      leaflet.default
-        .tileLayer(
-          "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
-          { maxZoom: 19, opacity: 0.4 }
-        )
-        .addTo(map);
+        leaflet.default
+          .tileLayer(
+            "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png",
+            { maxZoom: 19, opacity: 0.4 }
+          )
+          .addTo(map);
+      }
 
       leaflet.default.control
         .zoom({ position: "bottomright" })
@@ -74,9 +111,12 @@ export function ChinaMap({
 
       // If a city is already selected, fit to its restaurant bounds immediately
       if (selectedCity) {
-        const bounds = getRestaurantBounds(selectedCity.id, leaflet.default);
+        const bounds = getRestaurantBounds(
+          selectedCity.id,
+          leaflet.default,
+          inChina
+        );
         if (bounds) {
-          // Padding: top for top bar (~60px), bottom for bottom sheet (~55% of viewport)
           map.fitBounds(bounds, {
             paddingTopLeft: [40, 80],
             paddingBottomRight: [40, 40],
@@ -107,6 +147,8 @@ export function ChinaMap({
     const leaflet = leafletRef.current;
     if (!map || !leaflet || !ready) return;
 
+    const useGcj02 = useGcj02Ref.current;
+
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
@@ -130,11 +172,14 @@ export function ChinaMap({
           iconAnchor: [size / 2, size / 2],
         });
 
+        const [lat, lng] = toCoord(
+          city.map_center[0],
+          city.map_center[1],
+          useGcj02
+        );
+
         const marker = leaflet
-          .marker(
-            { lat: city.map_center[0], lng: city.map_center[1] },
-            { icon }
-          )
+          .marker({ lat, lng }, { icon })
           .addTo(map)
           .bindPopup(
             `<div style="text-align:center;font-family:system-ui;padding:2px 0;">
@@ -169,8 +214,10 @@ export function ChinaMap({
           iconAnchor: [3.5, 3.5],
         });
 
+        const [lat, lng] = toCoord(restaurant.lat, restaurant.lng, useGcj02);
+
         const marker = leaflet
-          .marker([restaurant.lat, restaurant.lng], { icon })
+          .marker([lat, lng], { icon })
           .addTo(map)
           .bindPopup(
             `<div style="font-family:system-ui;padding:2px 0;">
@@ -196,7 +243,11 @@ export function ChinaMap({
 
     try {
       if (selectedCity) {
-        const bounds = getRestaurantBounds(selectedCity.id, leaflet);
+        const bounds = getRestaurantBounds(
+          selectedCity.id,
+          leaflet,
+          useGcj02Ref.current
+        );
         if (bounds) {
           map.fitBounds(bounds, {
             paddingTopLeft: [40, 80],
@@ -236,9 +287,7 @@ export function ChinaMap({
       `}</style>
       <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
       {!ready && (
-        <div
-          className="absolute inset-0 flex items-center justify-center bg-neutral-50"
-        >
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-50">
           <div className="h-5 w-5 rounded-full border-2 border-neutral-300 border-t-neutral-500 animate-spin" />
         </div>
       )}
