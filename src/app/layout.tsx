@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "China First Bite — Local Food Guide for Travelers",
+  title: "Hao Chi - Explore China with Nancy's guide!",
   description:
-    "Discover authentic local food in China. Find the best restaurants, know what to order, and navigate with confidence. Built for first-time travelers.",
+    "Discover authentic local food in China. Find the best restaurants, know what to order, and navigate with confidence.",
+  openGraph: {
+    title: "Hao Chi - Explore China with Nancy's guide!",
+    description:
+      "Discover authentic local food in China. Find the best restaurants, know what to order, and navigate with confidence.",
+  },
 };
 
 export default function RootLayout({
