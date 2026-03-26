@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { City, Restaurant } from "@/types";
 import { ChinaMap } from "./ChinaMap";
 import { CityPanel } from "./CityPanel";
@@ -11,16 +11,21 @@ import { useRouter } from "next/navigation";
 import { BottomNav } from "./BottomNav";
 import { CityGrid } from "./CityGrid";
 
+const mapCities = cities.filter((c) => c.slug !== "furong");
+
 export function HomePage() {
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [showPanel, setShowPanel] = useState(false);
   const [activeTab, setActiveTab] = useState<"home" | "map">("home");
+  const [showCityPicker, setShowCityPicker] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
     setActiveTab("map");
     setShowPanel(true);
+    setShowCityPicker(false);
   };
 
   const handleRestaurantSelect = (restaurant: Restaurant) => {
@@ -29,6 +34,18 @@ export function HomePage() {
       router.push(`/city/${city.slug}/restaurant/${restaurant.id}`);
     }
   };
+
+  // Close picker when tapping outside
+  useEffect(() => {
+    if (!showCityPicker) return;
+    function handleClick(e: MouseEvent) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setShowCityPicker(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showCityPicker]);
 
   return (
     <div className="flex h-[100dvh] flex-col bg-white">
@@ -123,11 +140,12 @@ export function HomePage() {
               />
             </div>
 
-            {/* Top bar — white bg, matches Figma exactly */}
+            {/* Top bar */}
             <div className="absolute top-0 left-0 right-0 z-[1000] bg-white flex items-center justify-between px-4 py-3">
               <button
                 onClick={() => {
                   setSelectedCity(null);
+                  setShowCityPicker(false);
                   setActiveTab("home");
                 }}
                 className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
@@ -135,16 +153,47 @@ export function HomePage() {
                 <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
               </button>
               {selectedCity && (
-                <div className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px]">
+                <button
+                  onClick={() => setShowCityPicker(!showCityPicker)}
+                  className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
+                >
                   <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
                     {selectedCity.name_en} {selectedCity.name_zh}
                   </span>
                   <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
-                </div>
+                </button>
               )}
-              {/* Empty spacer to balance the back button for centering */}
-              <div className="w-8" />
             </div>
+
+            {/* City picker popup */}
+            {showCityPicker && (
+              <div
+                ref={pickerRef}
+                className="absolute right-4 top-[60px] z-[1001] bg-white rounded-[24px] overflow-hidden"
+                style={{ boxShadow: "0 4px 18px rgba(0,0,0,0.24)" }}
+              >
+                <div className="px-6 py-6">
+                  <div className="flex flex-col gap-2">
+                    {mapCities.map((city) => {
+                      const isSelected = selectedCity?.id === city.id;
+                      return (
+                        <button
+                          key={city.id}
+                          onClick={() => handleCitySelect(city)}
+                          className={`w-full rounded-[20px] px-4 py-3 text-[14px] font-normal leading-[18px] text-[#0A0A0A] touch-manipulation transition-colors ${
+                            isSelected
+                              ? "bg-[#F7F7F7] border-2 border-[#0A0A0A]"
+                              : "bg-white border border-[#D8DCE0]"
+                          }`}
+                        >
+                          {city.name_en} {city.name_zh}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Bottom sheet — scrollable, always shown */}
             {selectedCity && showPanel && (
@@ -175,6 +224,7 @@ export function HomePage() {
             if (tab === "home") {
               setSelectedCity(null);
               setShowPanel(false);
+              setShowCityPicker(false);
             }
           }}
         />
