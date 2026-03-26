@@ -13,6 +13,8 @@ interface ChinaMapProps {
   onCitySelect: (city: City) => void;
   onRestaurantSelect?: (restaurant: Restaurant) => void;
   className?: string;
+  /** Bottom sheet height as vh percentage, used to offset pin centering */
+  bottomSheetVh?: number;
 }
 
 function getRestaurantBounds(
@@ -48,6 +50,7 @@ export function ChinaMap({
   onCitySelect,
   onRestaurantSelect,
   className,
+  bottomSheetVh = 0,
 }: ChinaMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -281,25 +284,28 @@ export function ChinaMap({
 
     try {
       const [lat, lng] = toCoord(restaurant.lat, restaurant.lng, useGcj02Ref.current);
-      const targetZoom = 15;
-      const point = map.project({ lat, lng }, targetZoom);
+      const targetZoom = Math.max(map.getZoom(), 14);
 
-      // Offset so pin appears in visible area between top nav (~56px) and bottom sheet (~45vh)
-      const topNav = 56;
-      const bottomSheet = window.innerHeight * 0.45;
+      // Calculate the visible vertical center between top nav and bottom sheet
+      const topNavPx = 56;
+      const sheetPx = window.innerHeight * (bottomSheetVh / 100);
       const mapHeight = map.getSize().y;
-      // Visible center is shifted down from map center by half the difference
-      const visibleCenter = (topNav + (mapHeight - bottomSheet)) / 2;
-      const mapCenter = mapHeight / 2;
-      const offsetY = visibleCenter - mapCenter;
+      // Visible area: from topNavPx to (mapHeight - sheetPx)
+      const visibleCenterY = (topNavPx + (mapHeight - sheetPx)) / 2;
+      const mapCenterY = mapHeight / 2;
+      // How many pixels we need to shift: positive means visible center is above map center
+      const pixelOffset = mapCenterY - visibleCenterY;
 
-      const offsetPoint = point.subtract([0, offsetY]);
-      const offsetLatLng = map.unproject(offsetPoint, targetZoom);
-      map.setView(offsetLatLng, targetZoom, { animate: true });
+      // Project pin to pixel, offset, unproject to get the adjusted center
+      const pinPoint = map.project({ lat, lng }, targetZoom);
+      const adjustedPoint = pinPoint.add([0, pixelOffset]);
+      const adjustedLatLng = map.unproject(adjustedPoint, targetZoom);
+
+      map.setView(adjustedLatLng, targetZoom, { animate: true });
     } catch {
       // Map may have been removed
     }
-  }, [selectedRestaurantId, ready]);
+  }, [selectedRestaurantId, ready, bottomSheetVh]);
 
   return (
     <div className={className} style={{ position: "relative" }}>

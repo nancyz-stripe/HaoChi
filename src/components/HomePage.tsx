@@ -33,10 +33,13 @@ function snapTo(height: number): number {
   return closest;
 }
 
-function BottomSheet({ children }: { children: React.ReactNode }) {
+function BottomSheet({ children, sheetHeight, setSheetHeight }: {
+  children: React.ReactNode;
+  sheetHeight: number;
+  setSheetHeight: (h: number) => void;
+}) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const heightRef = useRef(SNAP_HALF);
-  const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
+  const heightRef = useRef(sheetHeight);
   const [animating, setAnimating] = useState(false);
   const dragging = useRef(false);
   const startY = useRef(0);
@@ -182,6 +185,7 @@ export function HomePage() {
   const [activeTab, setActiveTab] = useState<"home" | "map">("home");
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
+  const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
   const mapEnteredViaUrl = useRef(false);
   const pickerRef = useRef<HTMLDivElement>(null);
   const pickerToggleRef = useRef<HTMLButtonElement>(null);
@@ -398,7 +402,11 @@ export function HomePage() {
                 selectedCity={selectedCity}
                 selectedRestaurantId={selectedRestaurantId}
                 onCitySelect={handleCitySelect}
-                onRestaurantSelect={(restaurant) => setSelectedRestaurantId(restaurant.id)}
+                onRestaurantSelect={(restaurant) => {
+                  setSelectedRestaurantId(restaurant.id);
+                  if (sheetHeight < SNAP_HALF) setSheetHeight(SNAP_HALF);
+                }}
+                bottomSheetVh={sheetHeight}
                 className="h-full"
               />
             </div>
@@ -438,7 +446,7 @@ export function HomePage() {
             )}
 
             {/* Interactive bottom sheet */}
-            <BottomSheet>
+            <BottomSheet sheetHeight={sheetHeight} setSheetHeight={setSheetHeight}>
               <div className="px-6">
                 <CityPanel
                   city={selectedCity}
