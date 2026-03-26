@@ -65,7 +65,36 @@ export function CityDetailPage({
   const heroImage = cityImages[city.slug];
 
   return (
-    <div className="flex-1 overflow-y-auto pb-20 bg-white">
+    <div className="flex-1 flex flex-col bg-white">
+      {/* Fixed top nav */}
+      <div className="sticky top-0 z-30 bg-white flex items-center justify-between px-4 py-3">
+        <button
+          onClick={onBack}
+          className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
+        >
+          <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
+        </button>
+        <div className="relative">
+          <button
+            ref={pickerToggleRef}
+            onClick={onToggleCityPicker}
+            className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
+          >
+            <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+              {city.name_en} {city.name_zh}
+            </span>
+            <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
+          </button>
+          {showCityPicker && (
+            <div className="absolute top-[52px] right-0 z-50">
+              {cityPickerElement}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto pb-20">
       {/* Hero image */}
       <div className="relative h-[206px] w-full">
         {heroImage ? (
@@ -77,33 +106,6 @@ export function CityDetailPage({
           />
         ) : (
           <div className="h-full w-full bg-neutral-200" />
-        )}
-
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          className="absolute top-[17px] left-4 rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
-        >
-          <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
-        </button>
-
-        {/* City selector pill */}
-        <button
-          ref={pickerToggleRef}
-          onClick={onToggleCityPicker}
-          className="absolute top-3 right-4 bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
-        >
-          <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
-            {city.name_en} {city.name_zh}
-          </span>
-          <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
-        </button>
-
-        {/* City picker popup */}
-        {showCityPicker && (
-          <div className="absolute top-[56px] right-4 z-50">
-            {cityPickerElement}
-          </div>
         )}
       </div>
 
@@ -148,6 +150,8 @@ export function CityDetailPage({
           ))}
         </div>
       </div>
+
+      </div>{/* end scrollable content */}
 
       {/* Photo gallery overlay */}
       {showGallery && (
