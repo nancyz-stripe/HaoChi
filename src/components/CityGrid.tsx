@@ -2,7 +2,6 @@
 
 import { City } from "@/types";
 import { cities } from "@/data/cities";
-import Image from "next/image";
 
 const cityImages: Record<string, string> = {
   chongqing: "/images/chongqing.png",
@@ -26,13 +25,12 @@ export function CityGrid({ onSelect }: CityGridProps) {
             onClick={() => onSelect(city)}
             className="group text-left touch-manipulation active:scale-[0.97] transition-transform"
           >
-            <div className="aspect-[156/148] rounded-[5.725px] overflow-hidden relative bg-neutral-100">
-              <Image
+            <div className="aspect-[156/148] rounded-[5.725px] overflow-hidden bg-neutral-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={cityImages[city.slug]}
                 alt={city.name_en}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 50vw, 200px"
+                className="h-full w-full object-cover"
               />
             </div>
             <p className="mt-2 text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
