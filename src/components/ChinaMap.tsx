@@ -36,9 +36,14 @@ export function ChinaMap({
 
       leafletRef.current = leaflet.default;
 
+      const initialCenter = selectedCity
+        ? { lat: selectedCity.map_center[0], lng: selectedCity.map_center[1] }
+        : { lat: 33.5, lng: 108.0 };
+      const initialZoom = selectedCity ? selectedCity.zoom : 5;
+
       const map = leaflet.default.map(containerRef.current, {
-        center: { lat: 33.5, lng: 108.0 },
-        zoom: 5,
+        center: initialCenter,
+        zoom: initialZoom,
         zoomControl: false,
         attributionControl: false,
       });
@@ -161,24 +166,19 @@ export function ChinaMap({
     markersRef.current = newMarkers;
   }, [selectedCity, ready, onCitySelect, onRestaurantSelect]);
 
-  const prevCityRef = useRef<string | null>(null);
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
 
-    const currentId = selectedCity?.id ?? null;
-    if (currentId === prevCityRef.current) return;
-    prevCityRef.current = currentId;
-
     try {
       if (selectedCity) {
-        map.flyTo(
+        map.setView(
           {
             lat: selectedCity.map_center[0],
             lng: selectedCity.map_center[1],
           },
           selectedCity.zoom,
-          { duration: 1.2 }
+          { animate: true, duration: 1.2 }
         );
       } else {
         map.setView({ lat: 33.5, lng: 108.0 }, 5);
