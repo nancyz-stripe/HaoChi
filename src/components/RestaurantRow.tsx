@@ -17,21 +17,22 @@ export function RestaurantRow({ restaurant }: RestaurantRowProps) {
       href={`/city/${city?.slug}/restaurant/${restaurant.id}`}
       className="block rounded-[12px] border border-[#E4E9EC] p-[14px] touch-manipulation active:bg-[#F7F7F7] transition-colors"
     >
-      <div className="flex items-start justify-between gap-[6px]">
-        <div className="min-w-0 flex-1">
+      <div className="flex flex-col gap-[6px]">
+        <div className="flex items-center justify-between">
           <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
-            {restaurant.name_en}
+            {restaurant.name_en}{" "}
+            <span className="text-[#0A0A0A]">{restaurant.name_zh}</span>
           </p>
-          <p className="mt-1 text-[14px] font-normal leading-[18px] text-[#717375] line-clamp-1">
-            {restaurant.short_description}
-          </p>
+          {restaurant.featured && (
+            <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#FFFAF4] px-2 py-1 text-[9px] font-medium text-[#B36F0E]">
+              <Sparkles className="h-3 w-3" />
+              LOCAL GEM
+            </span>
+          )}
         </div>
-        {restaurant.featured && (
-          <span className="shrink-0 inline-flex items-center gap-1 rounded-[4px] bg-[#FFFAF4] px-2 py-1 text-[9px] font-medium text-[#B36F0E]">
-            <Sparkles className="h-3 w-3" />
-            LOCAL GEM
-          </span>
-        )}
+        <p className="text-[14px] font-normal leading-[18px] text-[#717375] line-clamp-2">
+          {restaurant.short_description}
+        </p>
       </div>
     </Link>
   );

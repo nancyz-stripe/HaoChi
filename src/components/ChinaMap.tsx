@@ -132,15 +132,14 @@ export function ChinaMap({
         const icon = leaflet.divIcon({
           className: "",
           html: `<div style="
-            width:8px;height:8px;
-            background:#555;
-            border:1.5px solid #fff;
+            width:7px;height:7px;
+            background:#0A0A0A;
             border-radius:50%;
-            box-shadow:0 1px 2px rgba(0,0,0,0.15);
+            box-shadow:0 0 0 2px rgba(10,10,10,0.2);
             cursor:pointer;
           "></div>`,
-          iconSize: [8, 8],
-          iconAnchor: [4, 4],
+          iconSize: [7, 7],
+          iconAnchor: [3.5, 3.5],
         });
 
         const marker = leaflet

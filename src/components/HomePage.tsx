@@ -112,35 +112,9 @@ export function HomePage() {
 
         {/* Map tab */}
         {activeTab === "map" && (
-          <div className="flex-1 flex flex-col relative">
-            {/* Top bar */}
-            <div className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 pt-3 pb-2">
-              {selectedCity && (
-                <>
-                  <button
-                    onClick={() => {
-                      setSelectedCity(null);
-                      setActiveTab("home");
-                    }}
-                    className="rounded-[24px] bg-white p-2 shadow-sm touch-manipulation active:scale-95"
-                  >
-                    <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
-                  </button>
-                  <div className="flex-1 flex justify-center">
-                    <div className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center gap-1.5 min-w-[202px] justify-center">
-                      <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
-                        {selectedCity.name_en} {selectedCity.name_zh}
-                      </span>
-                      <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
-                    </div>
-                  </div>
-                  <div className="w-8" />
-                </>
-              )}
-            </div>
-
-            {/* Map */}
-            <div className="flex-1">
+          <div className="flex-1 relative overflow-hidden">
+            {/* Full-screen map background */}
+            <div className="absolute inset-0">
               <ChinaMap
                 selectedCity={selectedCity}
                 onCitySelect={handleCitySelect}
@@ -149,17 +123,42 @@ export function HomePage() {
               />
             </div>
 
-            {/* Bottom sheet */}
+            {/* Top bar — white bg, matches Figma exactly */}
+            <div className="absolute top-0 left-0 right-0 z-20 bg-white flex items-center justify-between px-4 py-3">
+              <button
+                onClick={() => {
+                  setSelectedCity(null);
+                  setActiveTab("home");
+                }}
+                className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
+              >
+                <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
+              </button>
+              {selectedCity && (
+                <div className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px]">
+                  <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+                    {selectedCity.name_en} {selectedCity.name_zh}
+                  </span>
+                  <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
+                </div>
+              )}
+              {/* Empty spacer to balance the back button for centering */}
+              <div className="w-8" />
+            </div>
+
+            {/* Bottom sheet — scrollable, always shown */}
             {selectedCity && showPanel && (
               <div
-                className="absolute inset-x-0 bottom-0 z-10 bg-white rounded-tl-[24px] rounded-tr-[24px]"
-                style={{ maxHeight: "55vh", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
+                className="absolute inset-x-0 bottom-0 z-10 bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
+                style={{ maxHeight: "calc(100% - 120px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
               >
-                <div className="flex items-center justify-center py-2">
+                {/* Drag handle */}
+                <div className="flex items-center justify-center py-2 shrink-0">
                   <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
                 </div>
-                <div className="overflow-y-auto" style={{ maxHeight: "calc(55vh - 16px)" }}>
-                  <div className="px-6 pb-24">
+                {/* Scrollable content */}
+                <div className="overflow-y-auto flex-1 pb-24">
+                  <div className="px-6">
                     <CityPanel city={selectedCity} variant="sheet" />
                   </div>
                 </div>
