@@ -124,7 +124,7 @@ export function HomePage() {
             </div>
 
             {/* Top bar — white bg, matches Figma exactly */}
-            <div className="absolute top-0 left-0 right-0 z-20 bg-white flex items-center justify-between px-4 py-3">
+            <div className="absolute top-0 left-0 right-0 z-[1000] bg-white flex items-center justify-between px-4 py-3">
               <button
                 onClick={() => {
                   setSelectedCity(null);
@@ -149,7 +149,7 @@ export function HomePage() {
             {/* Bottom sheet — scrollable, always shown */}
             {selectedCity && showPanel && (
               <div
-                className="absolute inset-x-0 bottom-0 z-10 bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
+                className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
                 style={{ maxHeight: "calc(100% - 120px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
               >
                 {/* Drag handle */}

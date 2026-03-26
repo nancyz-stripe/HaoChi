@@ -9,7 +9,7 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-[#D8DCE0] lg:hidden">
+    <nav className="fixed bottom-0 inset-x-0 z-[1001] bg-white border-t border-[#D8DCE0] lg:hidden">
       <div className="flex px-6 py-3">
         <button
           onClick={() => onTabChange("home")}
