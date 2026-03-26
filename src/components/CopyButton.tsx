@@ -22,16 +22,20 @@ export function CopyButton({
 
   return (
     <button
-      onClick={() => copy(text, label || text)}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        copy(text, label || text);
+      }}
       className={cn(
-        "inline-flex items-center gap-1.5 transition-all duration-200",
+        "inline-flex items-center gap-1.5 transition-all duration-200 active:scale-95 touch-manipulation",
         variant === "default" &&
-          "rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground",
+          "rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground",
         variant === "inline" &&
-          "rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
+          "rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-accent hover:text-foreground",
         variant === "large" &&
-          "rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground hover:bg-accent",
-        isCopied && "border-emerald-300 bg-emerald-50 text-emerald-700",
+          "rounded-lg border border-border bg-card px-5 py-3 text-sm font-medium text-foreground hover:bg-accent",
+        isCopied && "border-emerald-200 bg-emerald-50 text-emerald-700",
         className
       )}
       title={`Copy: ${text}`}

@@ -1,6 +1,6 @@
 "use client";
 
-import { City, Dish } from "@/types";
+import { City } from "@/types";
 import {
   getSignatureDishes,
   getFirstMealDishes,
@@ -10,8 +10,6 @@ import {
 } from "@/data";
 import { DishCard } from "./DishCard";
 import { RestaurantCard } from "./RestaurantCard";
-import { SpiceBadge } from "./SpiceBadge";
-import { Utensils, Sparkles, Shield, Flame } from "lucide-react";
 import { useState } from "react";
 
 interface CityPanelProps {
@@ -40,49 +38,46 @@ export function CityPanel({ city }: CityPanelProps) {
     }
   })();
 
-  const filters: { key: DishFilter; label: string; icon: React.ReactNode }[] = [
-    { key: "all", label: "All dishes", icon: <Utensils className="h-3.5 w-3.5" /> },
-    { key: "first-timer", label: "Beginner-friendly", icon: <Shield className="h-3.5 w-3.5" /> },
-    { key: "mild", label: "Low spice", icon: <Sparkles className="h-3.5 w-3.5" /> },
-    { key: "adventurous", label: "Adventurous", icon: <Flame className="h-3.5 w-3.5" /> },
+  const filters: { key: DishFilter; label: string }[] = [
+    { key: "all", label: "All" },
+    { key: "first-timer", label: "Beginner" },
+    { key: "mild", label: "Low spice" },
+    { key: "adventurous", label: "Adventurous" },
   ];
 
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-6 pb-8">
       {/* City header */}
       <div>
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-3xl font-bold text-foreground">{city.name_en}</h1>
-          <span className="text-2xl text-foreground/50">{city.name_zh}</span>
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-xl font-bold text-foreground lg:text-2xl">{city.name_en}</h1>
+          <span className="text-lg text-foreground/40">{city.name_zh}</span>
         </div>
-        <p className="mt-3 text-base text-muted-foreground leading-relaxed">
+        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
           {city.short_intro}
         </p>
       </div>
 
       {/* Food identity */}
-      <div className="rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-amber-800">
-          Food Identity
-        </h2>
-        <p className="mt-2 text-sm text-amber-900/80 leading-relaxed">
+      <div className="rounded-lg bg-secondary p-4">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Food identity
+        </p>
+        <p className="mt-2 text-sm text-foreground/80 leading-relaxed">
           {city.food_identity}
         </p>
       </div>
 
-      {/* Start with these dishes */}
+      {/* Start with these */}
       {firstMealDishes.length > 0 && (
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="h-5 w-5 text-amber-500" />
-            <h2 className="text-lg font-semibold text-foreground">
-              Start with these dishes
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground mb-4">
-            Your first meal in {city.name_en}? These are the safe, iconic picks.
+          <h2 className="text-sm font-semibold text-foreground">
+            Start with these
+          </h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Safe, iconic picks for your first meal here
           </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+          <div className="mt-3 space-y-2">
             {firstMealDishes.map((dish) => (
               <DishCard key={dish.id} dish={dish} compact />
             ))}
@@ -90,33 +85,32 @@ export function CityPanel({ city }: CityPanelProps) {
         </div>
       )}
 
-      {/* Signature dishes with filters */}
+      {/* Signature dishes */}
       <div>
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Signature Dishes
+        <h2 className="text-sm font-semibold text-foreground">
+          Signature dishes
         </h2>
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-4">
+        <div className="mt-2 flex gap-1 overflow-x-auto scrollbar-none pb-1">
           {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setDishFilter(f.key)}
-              className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`whitespace-nowrap rounded-md px-2.5 py-1 text-[11px] font-medium transition-all touch-manipulation ${
                 dishFilter === f.key
                   ? "bg-foreground text-background"
-                  : "bg-secondary text-secondary-foreground hover:bg-accent"
+                  : "bg-secondary text-muted-foreground"
               }`}
             >
-              {f.icon}
               {f.label}
             </button>
           ))}
         </div>
         {filteredDishes.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">
-            No dishes match this filter in {city.name_en}.
+          <p className="text-xs text-muted-foreground py-6 text-center">
+            No dishes match this filter.
           </p>
         ) : (
-          <div className="grid gap-4">
+          <div className="mt-3 space-y-2">
             {filteredDishes.map((dish) => (
               <DishCard key={dish.id} dish={dish} />
             ))}
@@ -126,10 +120,10 @@ export function CityPanel({ city }: CityPanelProps) {
 
       {/* Restaurants */}
       <div>
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          Where to Eat
+        <h2 className="text-sm font-semibold text-foreground">
+          Where to eat
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div className="mt-3 space-y-2">
           {cityRestaurants.map((restaurant) => (
             <RestaurantCard key={restaurant.id} restaurant={restaurant} />
           ))}

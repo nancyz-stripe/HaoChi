@@ -4,7 +4,6 @@ import { City, Restaurant } from "@/types";
 import { ChinaMap } from "@/components/ChinaMap";
 import { CityPanel } from "@/components/CityPanel";
 import { CitySelector } from "@/components/CitySelector";
-import { cities } from "@/data/cities";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -21,24 +20,18 @@ export function CityPageClient({ city }: { city: City }) {
 
   return (
     <div className="flex h-[100dvh] flex-col">
-      {/* Header */}
-      <header className="flex-shrink-0 border-b border-border bg-card/80 backdrop-blur-sm z-20">
+      <header className="flex-shrink-0 border-b border-border bg-background/80 backdrop-blur-sm z-20">
         <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">🥢</span>
-              <h1 className="text-lg font-bold tracking-tight text-foreground">
-                China First Bite
-              </h1>
-            </Link>
-          </div>
-          <div className="mt-3">
+          <Link href="/" className="text-base font-semibold tracking-tight text-foreground">
+            China First Bite
+          </Link>
+          <div className="mt-2.5">
             <CitySelector selectedCity={city} onSelect={handleCitySelect} />
           </div>
         </div>
       </header>
 
-      {/* Desktop: split layout */}
+      {/* Desktop */}
       <div className="flex-1 overflow-hidden hidden lg:flex">
         <div className="flex-1">
           <ChinaMap
@@ -55,9 +48,9 @@ export function CityPageClient({ city }: { city: City }) {
         </div>
       </div>
 
-      {/* Mobile: scrollable */}
+      {/* Mobile: smaller map, scrollable content */}
       <div className="flex-1 overflow-y-auto lg:hidden">
-        <div className="h-[40vh]">
+        <div className="h-[28vh] min-h-[160px]">
           <ChinaMap
             selectedCity={city}
             onCitySelect={handleCitySelect}
@@ -65,7 +58,7 @@ export function CityPageClient({ city }: { city: City }) {
             className="h-full"
           />
         </div>
-        <div className="p-4">
+        <div className="px-4 pt-4 pb-6">
           <CityPanel city={city} />
         </div>
       </div>
