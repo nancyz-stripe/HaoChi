@@ -1,10 +1,36 @@
 "use client";
 
-import { Heart, MapPin } from "lucide-react";
+import { Heart } from "lucide-react";
 
 interface BottomNavProps {
   activeTab: "home" | "map";
   onTabChange: (tab: "home" | "map") => void;
+}
+
+function MapPinIcon({ active }: { active: boolean }) {
+  const stroke = active ? "#1A2C44" : "#667691";
+  const pinFill = active ? "#1A2C44" : "none";
+  const circleFill = active ? "#F4F7FA" : "none";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={stroke}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path
+        d="M20 10c0 4.993-7.942 10.751-7.942 10.751a.138.138 0 0 1-.116 0S4 14.993 4 10a8 8 0 0 1 16 0"
+        fill={pinFill}
+      />
+      <circle cx="12" cy="10" r="3" fill={circleFill} />
+    </svg>
+  );
 }
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
@@ -23,7 +49,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
               className="h-6 w-6"
               style={{
                 color: activeTab === "home" ? "#1A2C44" : "#667691",
-                fill: "none",
+                fill: activeTab === "home" ? "#1A2C44" : "none",
                 strokeWidth: 1.5,
               }}
             />
@@ -47,14 +73,7 @@ export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
           }`}
         >
           <div className="flex flex-col items-center gap-1">
-            <MapPin
-              className="h-6 w-6"
-              style={{
-                color: activeTab === "map" ? "#1A2C44" : "#667691",
-                fill: "none",
-                strokeWidth: 1.5,
-              }}
-            />
+            <MapPinIcon active={activeTab === "map"} />
             <span
               className="text-[12px] leading-[16px]"
               style={{
