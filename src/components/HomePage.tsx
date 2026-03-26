@@ -448,7 +448,7 @@ export function HomePage() {
 
         {/* Bottom nav */}
         <BottomNav
-          activeTab={activeTab}
+          activeTab={activeTab === "home" && showCityDetail ? undefined : activeTab}
           onTabChange={(tab) => {
             setShowCityPicker(false);
             if (tab === "map") {

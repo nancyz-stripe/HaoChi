@@ -3,7 +3,7 @@
 import { Heart } from "lucide-react";
 
 interface BottomNavProps {
-  activeTab: "home" | "map";
+  activeTab?: "home" | "map";
   onTabChange: (tab: "home" | "map") => void;
 }
 
