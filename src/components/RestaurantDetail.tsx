@@ -155,7 +155,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                         onClick={() => speakChinese(dish.name_zh)}
                         className="shrink-0 touch-manipulation active:scale-95"
                       >
-                        <Volume2 className="h-[14px] w-[14px] text-[#717375]" />
+                        <Volume2 className="h-4 w-4 text-[#717375]" />
                       </button>
                     </div>
                     {isMustTry && (
