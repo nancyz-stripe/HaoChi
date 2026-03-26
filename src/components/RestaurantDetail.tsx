@@ -148,16 +148,14 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 {/* Top row: image + content */}
                 <div className="flex gap-2 items-start">
                   {/* Dish image */}
-                  {dish.image && (
-                    <div className="h-[84px] w-[88px] shrink-0 rounded-[3.5px] overflow-hidden bg-neutral-100">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={dish.image}
-                        alt={dish.name_en}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="h-[84px] w-[88px] shrink-0 rounded-[3.5px] overflow-hidden bg-neutral-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/dishes/cq-hotpot.png"
+                      alt={dish.name_en}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   {/* Content */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
                     {isMustTry && (
