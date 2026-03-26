@@ -186,7 +186,6 @@ export function HomePage() {
   const [showCityPicker, setShowCityPicker] = useState(false);
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<string | null>(null);
   const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
-  const mapEnteredViaUrl = useRef(false);
   const pickerRef = useRef<HTMLDivElement>(null);
   const pickerToggleRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
@@ -201,7 +200,6 @@ export function HomePage() {
 
     if (tab === "map") {
       initializedFromUrl.current = true;
-      mapEnteredViaUrl.current = true;
       setActiveTab("map");
       if (citySlug) {
         const city = cities.find((c) => c.slug === citySlug);
@@ -436,14 +434,7 @@ export function HomePage() {
             {/* Top bar */}
             <div className="absolute top-0 left-0 right-0 z-[1000] bg-white flex items-center justify-between px-4 py-3">
               <button
-                onClick={() => {
-                  if (mapEnteredViaUrl.current) {
-                    mapEnteredViaUrl.current = false;
-                    router.back();
-                  } else {
-                    setActiveTab("home");
-                  }
-                }}
+                onClick={() => router.back()}
                 className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
               >
                 <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
