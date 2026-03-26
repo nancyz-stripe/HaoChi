@@ -22,7 +22,21 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Desktop gate — visible only on lg+ screens */}
+        <div className="hidden lg:flex fixed inset-0 z-[9999] bg-white items-center justify-center">
+          <div className="text-center px-6">
+            <p className="text-[28px] font-medium text-[#0A0A0A]">Hao Chi!</p>
+            <p className="mt-2 text-[16px] text-[#717375] leading-relaxed max-w-[360px]">
+              This experience is designed for mobile.
+              <br />
+              Please visit on your phone to explore.
+            </p>
+          </div>
+        </div>
+        {/* App content — hidden on lg+ screens */}
+        <div className="lg:hidden flex-1 flex flex-col">{children}</div>
+      </body>
     </html>
   );
 }
