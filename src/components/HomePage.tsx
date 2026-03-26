@@ -14,153 +14,153 @@ import { CityDetailPage } from "./CityDetailPage";
 
 const mapCities = cities.filter((c) => c.slug !== "furong");
 
-// Snap points as percentage of viewport height from the bottom
-const SNAP_COLLAPSED = 80; // just handle + title visible
-const SNAP_HALF = 45; // ~45% of screen
-const SNAP_FULL = 85; // nearly full screen
+// Snap points as percentage of viewport height (sheet height)
+const SNAP_COLLAPSED = 15;
+const SNAP_HALF = 45;
+const SNAP_FULL = 85;
+const SNAPS = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
+
+function snapTo(height: number): number {
+  let closest = SNAPS[0];
+  let minDist = Infinity;
+  for (const snap of SNAPS) {
+    const dist = Math.abs(height - snap);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = snap;
+    }
+  }
+  return closest;
+}
 
 function BottomSheet({ children }: { children: React.ReactNode }) {
-  const sheetRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const heightRef = useRef(SNAP_HALF);
   const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
-  const dragState = useRef<{ startY: number; startHeight: number; source: "handle" | "content" } | null>(null);
+  const [animating, setAnimating] = useState(false);
+  const dragging = useRef(false);
+  const startY = useRef(0);
+  const startH = useRef(0);
+
+  // Keep ref in sync for use in event handlers
+  heightRef.current = sheetHeight;
+
   const isFullyExpanded = sheetHeight >= SNAP_FULL - 1;
 
-  const handleDragStart = useCallback((clientY: number, source: "handle" | "content") => {
-    dragState.current = { startY: clientY, startHeight: sheetHeight, source };
-  }, [sheetHeight]);
-
-  const handleDragMove = useCallback((clientY: number) => {
-    if (!dragState.current) return;
-    const deltaY = dragState.current.startY - clientY;
-    const deltaPercent = (deltaY / window.innerHeight) * 100;
-    const newHeight = Math.min(SNAP_FULL, Math.max(10, dragState.current.startHeight + deltaPercent));
-    setSheetHeight(newHeight);
+  const beginDrag = useCallback((y: number) => {
+    dragging.current = true;
+    startY.current = y;
+    startH.current = heightRef.current;
+    setAnimating(false);
   }, []);
 
-  const handleDragEnd = useCallback(() => {
-    if (!dragState.current) return;
-    const snaps = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
-    let closest = snaps[0];
-    let minDist = Math.abs(sheetHeight - snaps[0]);
-    for (const snap of snaps) {
-      const dist = Math.abs(sheetHeight - snap);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = snap;
-      }
-    }
-    setSheetHeight(closest);
-    dragState.current = null;
-  }, [sheetHeight]);
+  const moveDrag = useCallback((y: number) => {
+    if (!dragging.current) return;
+    const delta = startY.current - y; // positive = swiping up
+    const deltaVh = (delta / window.innerHeight) * 100;
+    const next = Math.min(SNAP_FULL, Math.max(SNAP_COLLAPSED, startH.current + deltaVh));
+    setSheetHeight(next);
+  }, []);
 
+  const endDrag = useCallback(() => {
+    if (!dragging.current) return;
+    dragging.current = false;
+    setAnimating(true);
+    setSheetHeight(snapTo(heightRef.current));
+  }, []);
+
+  // Global pointer listeners for handle dragging (mouse/trackpad)
   useEffect(() => {
-    const onPointerMove = (e: PointerEvent) => handleDragMove(e.clientY);
-    const onPointerUp = () => handleDragEnd();
-
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
-
+    const onMove = (e: PointerEvent) => moveDrag(e.clientY);
+    const onUp = () => endDrag();
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
     return () => {
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
     };
-  }, [handleDragMove, handleDragEnd]);
+  }, [moveDrag, endDrag]);
 
-  // Touch handling on the content area: expand sheet first, then scroll
+  // Touch listener on the whole sheet (handle + content)
   useEffect(() => {
-    const content = contentRef.current;
-    if (!content) return;
+    const sheet = contentRef.current?.parentElement;
+    if (!sheet) return;
 
     let touchStartY = 0;
-    let startHeight = 0;
-    let isDraggingSheet = false;
+    let touchStartH = 0;
+    let decided = false;
+    let sheetDrag = false;
 
-    const onTouchStart = (e: TouchEvent) => {
+    const onStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
-      startHeight = sheetHeight;
-      isDraggingSheet = false;
+      touchStartH = heightRef.current;
+      decided = false;
+      sheetDrag = false;
     };
 
-    const onTouchMove = (e: TouchEvent) => {
-      const currentY = e.touches[0].clientY;
-      const deltaY = touchStartY - currentY;
-      const scrollTop = content.scrollTop;
-      const isAtTop = scrollTop <= 0;
-      const isSwipingUp = deltaY > 0;
-      const isSwipingDown = deltaY < 0;
-      const currentlyFull = startHeight >= SNAP_FULL - 1;
+    const onMove = (e: TouchEvent) => {
+      const y = e.touches[0].clientY;
+      const delta = touchStartY - y; // positive = swiping up
+      const isFull = touchStartH >= SNAP_FULL - 1;
+      const scrollTop = contentRef.current?.scrollTop ?? 0;
 
-      // Swiping up and sheet not fully expanded → expand sheet
-      if (isSwipingUp && !currentlyFull && !isDraggingSheet) {
-        isDraggingSheet = true;
-      }
+      if (!decided) {
+        // Need a minimum movement to decide
+        if (Math.abs(delta) < 5) return;
+        decided = true;
 
-      // Swiping down and content is at the top → collapse sheet
-      if (isSwipingDown && isAtTop && !isDraggingSheet) {
-        isDraggingSheet = true;
-      }
-
-      if (isDraggingSheet) {
-        e.preventDefault();
-        const deltaPercent = (deltaY / window.innerHeight) * 100;
-        const newHeight = Math.min(SNAP_FULL, Math.max(10, startHeight + deltaPercent));
-        setSheetHeight(newHeight);
-      }
-    };
-
-    const onTouchEnd = () => {
-      if (isDraggingSheet) {
-        // Snap
-        const snaps = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
-        let closest = snaps[0];
-        let minDist = Infinity;
-        for (const snap of snaps) {
-          const dist = Math.abs(sheetHeight - snap);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = snap;
-          }
+        if (delta > 0 && !isFull) {
+          // Swiping up and not fully expanded → drag sheet up
+          sheetDrag = true;
+        } else if (delta < 0 && scrollTop <= 0) {
+          // Swiping down and content at top → drag sheet down
+          sheetDrag = true;
         }
-        setSheetHeight(closest);
-        isDraggingSheet = false;
+        // Otherwise: let content scroll normally
+      }
+
+      if (sheetDrag) {
+        e.preventDefault();
+        const deltaVh = (delta / window.innerHeight) * 100;
+        const next = Math.min(SNAP_FULL, Math.max(SNAP_COLLAPSED, touchStartH + deltaVh));
+        setSheetHeight(next);
       }
     };
 
-    content.addEventListener("touchstart", onTouchStart, { passive: true });
-    content.addEventListener("touchmove", onTouchMove, { passive: false });
-    content.addEventListener("touchend", onTouchEnd);
+    const onEnd = () => {
+      if (sheetDrag) {
+        setAnimating(true);
+        setSheetHeight(snapTo(heightRef.current));
+        sheetDrag = false;
+      }
+      decided = false;
+    };
+
+    sheet.addEventListener("touchstart", onStart, { passive: true });
+    sheet.addEventListener("touchmove", onMove, { passive: false });
+    sheet.addEventListener("touchend", onEnd);
 
     return () => {
-      content.removeEventListener("touchstart", onTouchStart);
-      content.removeEventListener("touchmove", onTouchMove);
-      content.removeEventListener("touchend", onTouchEnd);
+      sheet.removeEventListener("touchstart", onStart);
+      sheet.removeEventListener("touchmove", onMove);
+      sheet.removeEventListener("touchend", onEnd);
     };
-  }, [sheetHeight]);
+  }, []);
 
   return (
     <div
-      ref={sheetRef}
       className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
       style={{
         height: `${sheetHeight}vh`,
         maxHeight: "calc(100% - 60px)",
         boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
-        transition: dragState.current ? "none" : "height 0.3s ease-out",
+        transition: animating ? "height 0.3s ease-out" : "none",
       }}
     >
       {/* Drag handle */}
       <div
         className="flex items-center justify-center py-3 shrink-0 cursor-grab active:cursor-grabbing touch-none"
-        onPointerDown={(e) => handleDragStart(e.clientY, "handle")}
-        onTouchStart={(e) => {
-          handleDragStart(e.touches[0].clientY, "handle");
-        }}
-        onTouchMove={(e) => {
-          e.preventDefault();
-          handleDragMove(e.touches[0].clientY);
-        }}
-        onTouchEnd={() => handleDragEnd()}
+        onPointerDown={(e) => beginDrag(e.clientY)}
       >
         <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
       </div>
