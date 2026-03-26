@@ -176,7 +176,7 @@ export function CityDetailPage({
                     alt={dish.label}
                     className="h-full w-full object-cover"
                   />
-                  <span className="absolute bottom-2 left-2 bg-[#F4F7FA] px-2 py-1 rounded-[4px] text-[9px] font-medium text-[#1A2C44] whitespace-nowrap">
+                  <span className="absolute bottom-2 left-2 bg-[#F4F7FA] px-2 py-1 rounded-[4px] text-[10px] font-medium text-[#0A0A0A] whitespace-nowrap">
                     {dish.label}
                   </span>
                 </div>
