@@ -13,6 +13,16 @@ interface ChinaMapProps {
   className?: string;
 }
 
+function getRestaurantBounds(cityId: string, leaflet: typeof L) {
+  const cityRestaurants = restaurants.filter((r) => r.city_id === cityId);
+  if (cityRestaurants.length === 0) return null;
+
+  const bounds = leaflet.latLngBounds(
+    cityRestaurants.map((r) => [r.lat, r.lng] as [number, number])
+  );
+  return bounds;
+}
+
 export function ChinaMap({
   selectedCity,
   onCitySelect,
@@ -36,14 +46,10 @@ export function ChinaMap({
 
       leafletRef.current = leaflet.default;
 
-      const initialCenter = selectedCity
-        ? { lat: selectedCity.map_center[0], lng: selectedCity.map_center[1] }
-        : { lat: 33.5, lng: 108.0 };
-      const initialZoom = selectedCity ? selectedCity.zoom : 5;
-
+      // Start with a default view; we'll fitBounds after if a city is selected
       const map = leaflet.default.map(containerRef.current, {
-        center: initialCenter,
-        zoom: initialZoom,
+        center: { lat: 33.5, lng: 108.0 },
+        zoom: 5,
         zoomControl: false,
         attributionControl: false,
       });
@@ -66,6 +72,20 @@ export function ChinaMap({
         .zoom({ position: "bottomright" })
         .addTo(map);
 
+      // If a city is already selected, fit to its restaurant bounds immediately
+      if (selectedCity) {
+        const bounds = getRestaurantBounds(selectedCity.id, leaflet.default);
+        if (bounds) {
+          // Padding: top for top bar (~60px), bottom for bottom sheet (~55% of viewport)
+          map.fitBounds(bounds, {
+            paddingTopLeft: [40, 80],
+            paddingBottomRight: [40, 40],
+            maxZoom: 15,
+            animate: false,
+          });
+        }
+      }
+
       mapRef.current = map;
       setReady(true);
     }
@@ -81,6 +101,7 @@ export function ChinaMap({
     };
   }, []);
 
+  // Update markers when city changes
   useEffect(() => {
     const map = mapRef.current;
     const leaflet = leafletRef.current;
@@ -91,43 +112,44 @@ export function ChinaMap({
 
     const newMarkers: L.Marker[] = [];
 
-    cities.forEach((city) => {
-      const isSelected = selectedCity?.id === city.id;
-      const size = isSelected ? 14 : 10;
+    // Only show city dots when no city is selected (overview mode)
+    if (!selectedCity) {
+      cities.forEach((city) => {
+        const size = 10;
+        const icon = leaflet.divIcon({
+          className: "",
+          html: `<div style="
+            width:${size}px;height:${size}px;
+            background:#888;
+            border:2px solid #fff;
+            border-radius:50%;
+            box-shadow:0 1px 3px rgba(0,0,0,0.2);
+            cursor:pointer;
+          "></div>`,
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+        });
 
-      const icon = leaflet.divIcon({
-        className: "",
-        html: `<div style="
-          width:${size}px;height:${size}px;
-          background:${isSelected ? "#1a1a1a" : "#888"};
-          border:2px solid #fff;
-          border-radius:50%;
-          box-shadow:0 1px 3px rgba(0,0,0,0.2);
-          cursor:pointer;
-          transition:all 0.2s;
-        "></div>`,
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
+        const marker = leaflet
+          .marker(
+            { lat: city.map_center[0], lng: city.map_center[1] },
+            { icon }
+          )
+          .addTo(map)
+          .bindPopup(
+            `<div style="text-align:center;font-family:system-ui;padding:2px 0;">
+              <div style="font-weight:600;font-size:13px;color:#1a1a1a;">${city.name_en}</div>
+              <div style="font-size:12px;color:#999;margin-top:1px;">${city.name_zh}</div>
+            </div>`,
+            { closeButton: false, className: "minimal-popup" }
+          )
+          .on("click", () => onCitySelect(city));
+
+        newMarkers.push(marker);
       });
+    }
 
-      const marker = leaflet
-        .marker(
-          { lat: city.map_center[0], lng: city.map_center[1] },
-          { icon }
-        )
-        .addTo(map)
-        .bindPopup(
-          `<div style="text-align:center;font-family:system-ui;padding:2px 0;">
-            <div style="font-weight:600;font-size:13px;color:#1a1a1a;">${city.name_en}</div>
-            <div style="font-size:12px;color:#999;margin-top:1px;">${city.name_zh}</div>
-          </div>`,
-          { closeButton: false, className: "minimal-popup" }
-        )
-        .on("click", () => onCitySelect(city));
-
-      newMarkers.push(marker);
-    });
-
+    // Show restaurant pins when a city is selected
     if (selectedCity) {
       const cityRestaurants = restaurants.filter(
         (r) => r.city_id === selectedCity.id
@@ -166,20 +188,23 @@ export function ChinaMap({
     markersRef.current = newMarkers;
   }, [selectedCity, ready, onCitySelect, onRestaurantSelect]);
 
+  // Fly to restaurant bounds when city changes
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !ready) return;
+    const leaflet = leafletRef.current;
+    if (!map || !leaflet || !ready) return;
 
     try {
       if (selectedCity) {
-        map.setView(
-          {
-            lat: selectedCity.map_center[0],
-            lng: selectedCity.map_center[1],
-          },
-          selectedCity.zoom,
-          { animate: true, duration: 1.2 }
-        );
+        const bounds = getRestaurantBounds(selectedCity.id, leaflet);
+        if (bounds) {
+          map.fitBounds(bounds, {
+            paddingTopLeft: [40, 80],
+            paddingBottomRight: [40, 40],
+            maxZoom: 15,
+            animate: true,
+          });
+        }
       } else {
         map.setView({ lat: 33.5, lng: 108.0 }, 5);
       }
