@@ -6,6 +6,7 @@ import { ArrowLeft, Copy, Volume2, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cities } from "@/data/cities";
 import { useState, useCallback } from "react";
+import { BottomNav } from "./BottomNav";
 
 function useCopy() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -179,6 +180,16 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
           })}
         </div>
       </div>
+      <BottomNav
+        activeTab="home"
+        onTabChange={(tab) => {
+          if (tab === "map") {
+            router.push(`/?tab=map&city=${city?.slug}&restaurant=${restaurant.id}`);
+          } else {
+            router.push("/");
+          }
+        }}
+      />
     </div>
   );
 }
