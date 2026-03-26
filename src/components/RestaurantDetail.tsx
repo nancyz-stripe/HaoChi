@@ -228,7 +228,6 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
       )}
 
       <BottomNav
-        activeTab="home"
         onTabChange={(tab) => {
           if (tab === "map") {
             router.push(`/?tab=map&city=${city?.slug}&restaurant=${restaurant.id}`);
