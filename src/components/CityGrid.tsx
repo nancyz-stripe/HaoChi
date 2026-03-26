@@ -2,14 +2,13 @@
 
 import { City } from "@/types";
 import { cities } from "@/data/cities";
+import Image from "next/image";
 
-// Placeholder images — gradient backgrounds representing each city's vibe
-const cityImages: Record<string, { gradient: string; emoji: string }> = {
-  chongqing: { gradient: "from-orange-900 to-red-800", emoji: "🌃" },
-  zhangjiajie: { gradient: "from-emerald-800 to-green-900", emoji: "🏔️" },
-  furong: { gradient: "from-amber-800 to-yellow-900", emoji: "🏮" },
-  xian: { gradient: "from-stone-700 to-stone-800", emoji: "🏛️" },
-  beijing: { gradient: "from-red-800 to-amber-900", emoji: "🏯" },
+const cityImages: Record<string, string> = {
+  chongqing: "/images/chongqing.png",
+  zhangjiajie: "/images/zhangjiajie.png",
+  xian: "/images/xian.png",
+  beijing: "/images/beijing.png",
 };
 
 interface CityGridProps {
@@ -18,33 +17,30 @@ interface CityGridProps {
 
 export function CityGrid({ onSelect }: CityGridProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      {cities.map((city, i) => {
-        const img = cityImages[city.slug] || { gradient: "from-neutral-700 to-neutral-800", emoji: "📍" };
-        const isLast = cities.length % 2 !== 0 && i === cities.length - 1;
-
-        return (
+    <div className="grid grid-cols-2 gap-x-[17px] gap-y-[32px]">
+      {cities
+        .filter((city) => cityImages[city.slug])
+        .map((city) => (
           <button
             key={city.id}
             onClick={() => onSelect(city)}
-            className={`group text-left touch-manipulation active:scale-[0.97] transition-transform ${
-              isLast ? "col-span-2 max-w-[calc(50%-6px)] mx-auto" : ""
-            }`}
+            className="group text-left touch-manipulation active:scale-[0.97] transition-transform"
           >
-            <div
-              className={`aspect-[4/3] rounded-xl bg-gradient-to-br ${img.gradient} overflow-hidden relative`}
-            >
-              <div className="absolute inset-0 flex items-center justify-center text-4xl opacity-30">
-                {img.emoji}
-              </div>
+            <div className="aspect-[156/148] rounded-[5.725px] overflow-hidden relative bg-neutral-100">
+              <Image
+                src={cityImages[city.slug]}
+                alt={city.name_en}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 200px"
+              />
             </div>
-            <p className="mt-2 text-sm font-medium text-foreground text-center">
+            <p className="mt-2 text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
               {city.name_en}{" "}
-              <span className="text-muted-foreground">{city.name_zh}</span>
+              <span className="text-[#717375]">{city.name_zh}</span>
             </p>
           </button>
-        );
-      })}
+        ))}
     </div>
   );
 }

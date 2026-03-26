@@ -6,9 +6,8 @@ import { ChinaMap } from "./ChinaMap";
 import { CityPanel } from "./CityPanel";
 import { CitySelector } from "./CitySelector";
 import { cities } from "@/data/cities";
-import { Heart, MapPin, X } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { BottomNav } from "./BottomNav";
 import { CityGrid } from "./CityGrid";
 
@@ -32,7 +31,7 @@ export function HomePage() {
   };
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-background">
+    <div className="flex h-[100dvh] flex-col bg-white">
       {/* ===== DESKTOP ===== */}
       <div className="hidden lg:flex flex-col h-full">
         <header className="flex-shrink-0 border-b border-border bg-background/80 backdrop-blur-sm z-20">
@@ -97,15 +96,15 @@ export function HomePage() {
         {/* Home tab */}
         {activeTab === "home" && (
           <div className="flex-1 overflow-y-auto pb-20">
-            <div className="px-5 pt-12 pb-6">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                Your China Trip
+            <div className="px-6 pt-[38px] pb-6">
+              <p className="text-[12px] font-normal leading-[16px] text-[#5D5F61]">
+                YOUR CHINA TRIP
               </p>
-              <h1 className="mt-1 text-[28px] font-bold text-foreground tracking-tight">
+              <h1 className="mt-1 text-[32px] font-medium leading-[42px] text-[#0A0A0A]">
                 Pick a city
               </h1>
             </div>
-            <div className="px-5">
+            <div className="px-6">
               <CityGrid onSelect={handleCitySelect} />
             </div>
           </div>
@@ -123,21 +122,19 @@ export function HomePage() {
                       setSelectedCity(null);
                       setActiveTab("home");
                     }}
-                    className="rounded-full bg-background/90 backdrop-blur-sm p-2 shadow-sm border border-border touch-manipulation active:scale-95"
+                    className="rounded-[24px] bg-white p-2 shadow-sm touch-manipulation active:scale-95"
                   >
-                    <X className="h-4 w-4 text-foreground" />
+                    <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
                   </button>
                   <div className="flex-1 flex justify-center">
-                    <div className="bg-background/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-sm border border-border flex items-center gap-2">
-                      <span className="text-sm font-semibold text-foreground">
-                        {selectedCity.name_en}
+                    <div className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center gap-1.5 min-w-[202px] justify-center">
+                      <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+                        {selectedCity.name_en} {selectedCity.name_zh}
                       </span>
-                      <span className="text-sm text-muted-foreground">
-                        {selectedCity.name_zh}
-                      </span>
+                      <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
                     </div>
                   </div>
-                  <div className="w-8" /> {/* spacer for centering */}
+                  <div className="w-8" />
                 </>
               )}
             </div>
@@ -155,14 +152,14 @@ export function HomePage() {
             {/* Bottom sheet */}
             {selectedCity && showPanel && (
               <div
-                className="absolute inset-x-0 bottom-0 z-10 bg-background rounded-t-2xl"
+                className="absolute inset-x-0 bottom-0 z-10 bg-white rounded-tl-[24px] rounded-tr-[24px]"
                 style={{ maxHeight: "55vh", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
               >
-                <div className="flex items-center justify-center pt-2.5 pb-1">
-                  <div className="h-1 w-9 rounded-full bg-neutral-300" />
+                <div className="flex items-center justify-center py-2">
+                  <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
                 </div>
                 <div className="overflow-y-auto" style={{ maxHeight: "calc(55vh - 16px)" }}>
-                  <div className="px-5 pb-24">
+                  <div className="px-6 pb-24">
                     <CityPanel city={selectedCity} variant="sheet" />
                   </div>
                 </div>

@@ -51,10 +51,10 @@ export function CityPanel({ city, variant = "full" }: CityPanelProps) {
   if (variant === "sheet") {
     return (
       <div>
-        <h2 className="text-base font-semibold text-foreground mt-2">
+        <h2 className="text-[16px] font-medium leading-[22px] text-[#0A0A0A] mt-2">
           Top restaurants in {city.name_en}
         </h2>
-        <div className="mt-4 space-y-0 divide-y divide-border">
+        <div className="mt-4 space-y-3">
           {cityRestaurants.map((restaurant) => (
             <RestaurantRow key={restaurant.id} restaurant={restaurant} />
           ))}

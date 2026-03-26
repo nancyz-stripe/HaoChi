@@ -1,7 +1,6 @@
 "use client";
 
 import { Heart, MapPin } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface BottomNavProps {
   activeTab: "home" | "map";
@@ -10,38 +9,51 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-30 bg-background border-t border-border lg:hidden">
-      <div className="flex">
+    <nav className="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-[#D8DCE0] lg:hidden">
+      <div className="flex px-6 py-3">
         <button
           onClick={() => onTabChange("home")}
-          className={cn(
-            "flex-1 flex flex-col items-center gap-0.5 py-2.5 touch-manipulation transition-colors",
-            activeTab === "home"
-              ? "text-foreground"
-              : "text-muted-foreground/50"
-          )}
+          className="flex-1 flex flex-col items-center gap-0.5 touch-manipulation transition-colors"
         >
           <Heart
-            className={cn("h-5 w-5", activeTab === "home" && "fill-current")}
+            className="h-6 w-6"
+            style={{
+              color: activeTab === "home" ? "#1A2C44" : "#717375",
+              fill: activeTab === "home" ? "#1A2C44" : "none",
+            }}
           />
-          <span className="text-[10px] font-medium">Home</span>
+          <span
+            className="text-[12px]"
+            style={{
+              color: activeTab === "home" ? "#1A2C44" : "#717375",
+              fontWeight: activeTab === "home" ? 500 : 400,
+            }}
+          >
+            Home
+          </span>
         </button>
         <button
           onClick={() => onTabChange("map")}
-          className={cn(
-            "flex-1 flex flex-col items-center gap-0.5 py-2.5 touch-manipulation transition-colors",
-            activeTab === "map"
-              ? "text-foreground"
-              : "text-muted-foreground/50"
-          )}
+          className="flex-1 flex flex-col items-center gap-0.5 touch-manipulation transition-colors"
         >
           <MapPin
-            className={cn("h-5 w-5", activeTab === "map" && "fill-current")}
+            className="h-6 w-6"
+            style={{
+              color: activeTab === "map" ? "#0A0A0A" : "#717375",
+              fill: activeTab === "map" ? "#0A0A0A" : "none",
+            }}
           />
-          <span className="text-[10px] font-medium">Map</span>
+          <span
+            className="text-[12px]"
+            style={{
+              color: activeTab === "map" ? "#0A0A0A" : "#717375",
+              fontWeight: activeTab === "map" ? 500 : 400,
+            }}
+          >
+            Map
+          </span>
         </button>
       </div>
-      {/* Safe area padding for phones with home indicator */}
       <div className="h-[env(safe-area-inset-bottom)]" />
     </nav>
   );
