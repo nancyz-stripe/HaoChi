@@ -3,8 +3,8 @@
 import { City } from "@/types";
 import { getFirstMealDishes, getRestaurantsByCity } from "@/data";
 import { RestaurantRow } from "./RestaurantRow";
-import { ArrowLeft, ChevronDown } from "lucide-react";
-import { RefObject } from "react";
+import { ArrowLeft, ChevronDown, X } from "lucide-react";
+import { RefObject, useState } from "react";
 
 const cityImages: Record<string, string> = {
   chongqing: "/images/chongqing.png",
@@ -59,6 +59,7 @@ export function CityDetailPage({
   cityPickerElement,
   pickerToggleRef,
 }: CityDetailPageProps) {
+  const [showGallery, setShowGallery] = useState(false);
   const cityRestaurants = getRestaurantsByCity(city.id);
   const dishes = cityDishCards[city.slug] || [];
   const heroImage = cityImages[city.slug];
@@ -114,7 +115,11 @@ export function CityDetailPage({
         {dishes.length > 0 && (
           <div className="mt-6 flex gap-[15px]">
             {dishes.map((dish) => (
-              <div key={dish.label} className="flex flex-col gap-2 items-center w-[99px] shrink-0">
+              <button
+                key={dish.label}
+                onClick={() => setShowGallery(true)}
+                className="flex flex-col gap-2 items-center w-[99px] shrink-0 touch-manipulation"
+              >
                 <div className="h-[94px] w-[99px] rounded-[4px] overflow-hidden bg-neutral-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -126,7 +131,7 @@ export function CityDetailPage({
                 <p className="text-[10px] font-medium text-[#0A0A0A] text-center leading-normal">
                   {dish.label}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -143,6 +148,36 @@ export function CityDetailPage({
           ))}
         </div>
       </div>
+
+      {/* Photo gallery overlay */}
+      {showGallery && (
+        <div className="fixed inset-0 z-[2000] bg-white flex flex-col">
+          {/* Top bar with close button */}
+          <div className="flex items-center justify-end px-4 py-3 shrink-0">
+            <button
+              onClick={() => setShowGallery(false)}
+              className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
+            >
+              <X className="h-4 w-4 text-[#0A0A0A]" />
+            </button>
+          </div>
+          {/* Scrollable images */}
+          <div className="flex-1 overflow-y-auto px-6 pb-8">
+            <div className="flex flex-col gap-[21px]">
+              {dishes.map((dish) => (
+                <div key={dish.label} className="w-full h-[228px] rounded-[4px] overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={dish.image}
+                    alt={dish.label}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
