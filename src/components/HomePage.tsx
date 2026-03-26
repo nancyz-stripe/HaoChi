@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { City, Restaurant } from "@/types";
 import { ChinaMap } from "./ChinaMap";
 import { CityPanel } from "./CityPanel";
@@ -13,6 +13,91 @@ import { CityGrid } from "./CityGrid";
 import { CityDetailPage } from "./CityDetailPage";
 
 const mapCities = cities.filter((c) => c.slug !== "furong");
+
+// Snap points as percentage of viewport height from the bottom
+const SNAP_COLLAPSED = 80; // just handle + title visible
+const SNAP_HALF = 45; // ~45% of screen
+const SNAP_FULL = 85; // nearly full screen
+
+function BottomSheet({ children }: { children: React.ReactNode }) {
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const [sheetHeight, setSheetHeight] = useState(SNAP_HALF);
+  const dragState = useRef<{ startY: number; startHeight: number } | null>(null);
+
+  const handleDragStart = useCallback((clientY: number) => {
+    dragState.current = { startY: clientY, startHeight: sheetHeight };
+  }, [sheetHeight]);
+
+  const handleDragMove = useCallback((clientY: number) => {
+    if (!dragState.current) return;
+    const deltaY = dragState.current.startY - clientY;
+    const deltaPercent = (deltaY / window.innerHeight) * 100;
+    const newHeight = Math.min(SNAP_FULL, Math.max(10, dragState.current.startHeight + deltaPercent));
+    setSheetHeight(newHeight);
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    if (!dragState.current) return;
+    // Snap to nearest point
+    const snaps = [SNAP_COLLAPSED, SNAP_HALF, SNAP_FULL];
+    let closest = snaps[0];
+    let minDist = Math.abs(sheetHeight - snaps[0]);
+    for (const snap of snaps) {
+      const dist = Math.abs(sheetHeight - snap);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = snap;
+      }
+    }
+    setSheetHeight(closest);
+    dragState.current = null;
+  }, [sheetHeight]);
+
+  useEffect(() => {
+    const onPointerMove = (e: PointerEvent) => handleDragMove(e.clientY);
+    const onPointerUp = () => handleDragEnd();
+    const onTouchMove = (e: TouchEvent) => handleDragMove(e.touches[0].clientY);
+    const onTouchEnd = () => handleDragEnd();
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [handleDragMove, handleDragEnd]);
+
+  return (
+    <div
+      ref={sheetRef}
+      className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
+      style={{
+        height: `${sheetHeight}vh`,
+        maxHeight: "calc(100% - 60px)",
+        boxShadow: "0 -4px 20px rgba(0,0,0,0.08)",
+        transition: dragState.current ? "none" : "height 0.3s ease-out",
+      }}
+    >
+      {/* Drag handle */}
+      <div
+        className="flex items-center justify-center py-3 shrink-0 cursor-grab active:cursor-grabbing touch-none"
+        onPointerDown={(e) => handleDragStart(e.clientY)}
+        onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
+      >
+        <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
+      </div>
+      {/* Scrollable content */}
+      <div className="overflow-y-auto flex-1 pb-24">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 export function HomePage() {
   const defaultCity = cities.find((c) => c.slug === "chongqing") || cities[0];
@@ -236,27 +321,17 @@ export function HomePage() {
               </div>
             )}
 
-            {/* Bottom sheet */}
-            <div
-              className="absolute inset-x-0 bottom-0 z-[1000] bg-white rounded-tl-[24px] rounded-tr-[24px] flex flex-col"
-              style={{ maxHeight: "calc(100% - 120px)", boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}
-            >
-              {/* Drag handle */}
-              <div className="flex items-center justify-center py-2 shrink-0">
-                <div className="h-1 w-10 rounded-[24px] bg-[#D8DCE0]" />
+            {/* Interactive bottom sheet */}
+            <BottomSheet>
+              <div className="px-6">
+                <CityPanel
+                  city={selectedCity}
+                  variant="sheet"
+                  selectedRestaurantId={selectedRestaurantId}
+                  onRestaurantSelect={(id) => setSelectedRestaurantId(id)}
+                />
               </div>
-              {/* Scrollable content */}
-              <div className="overflow-y-auto flex-1 pb-24">
-                <div className="px-6">
-                  <CityPanel
-                    city={selectedCity}
-                    variant="sheet"
-                    selectedRestaurantId={selectedRestaurantId}
-                    onRestaurantSelect={(id) => setSelectedRestaurantId(id)}
-                  />
-                </div>
-              </div>
-            </div>
+            </BottomSheet>
           </div>
         )}
 

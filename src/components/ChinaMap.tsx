@@ -270,6 +270,22 @@ export function ChinaMap({
     }
   }, [selectedCity, ready]);
 
+  // Center on selected restaurant
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !selectedRestaurantId) return;
+
+    const restaurant = restaurants.find((r) => r.id === selectedRestaurantId);
+    if (!restaurant) return;
+
+    try {
+      const [lat, lng] = toCoord(restaurant.lat, restaurant.lng, useGcj02Ref.current);
+      map.setView({ lat, lng }, 15, { animate: true });
+    } catch {
+      // Map may have been removed
+    }
+  }, [selectedRestaurantId, ready]);
+
   return (
     <div className={className} style={{ position: "relative" }}>
       <style>{`
