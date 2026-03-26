@@ -36,7 +36,7 @@ function MapPinIcon({ active }: { active: boolean }) {
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
     <nav className="fixed bottom-0 inset-x-0 z-[1001] bg-white border-t-2 border-[#F7F7F7] lg:hidden">
-      <div className="flex items-center justify-between px-4 py-6">
+      <div className="flex items-center justify-between px-4 py-3">
         {/* Home tab */}
         <button
           onClick={() => onTabChange("home")}
