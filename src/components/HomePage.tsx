@@ -362,7 +362,7 @@ export function HomePage() {
           <div className="flex-1 overflow-y-auto pb-20">
             <div className="px-6 pt-[38px] pb-6">
               <p className="text-[12px] font-normal leading-[16px] text-[#5D5F61]">
-                CECILIA & GERARDO'S CHINA TRIP
+                EAT AROUND CHINA WITH NANCY
               </p>
               <h1 className="mt-1 text-[32px] font-medium leading-[42px] text-[#0A0A0A]">
                 Pick a city
