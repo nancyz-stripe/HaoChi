@@ -189,12 +189,14 @@ export function HomePage() {
   const searchParams = useSearchParams();
 
   // Handle URL params (e.g. from "View in map" on restaurant page)
+  const initializedFromUrl = useRef(false);
   useEffect(() => {
     const tab = searchParams.get("tab");
     const citySlug = searchParams.get("city");
     const restaurantId = searchParams.get("restaurant");
 
     if (tab === "map") {
+      initializedFromUrl.current = true;
       mapEnteredViaUrl.current = true;
       setActiveTab("map");
       if (citySlug) {
@@ -206,6 +208,33 @@ export function HomePage() {
       }
     }
   }, [searchParams]);
+
+  // Sync URL when switching to map tab so browser back preserves state
+  const prevTab = useRef(activeTab);
+  useEffect(() => {
+    if (initializedFromUrl.current) {
+      initializedFromUrl.current = false;
+      prevTab.current = activeTab;
+      return;
+    }
+    const params = new URLSearchParams();
+    if (activeTab === "map") {
+      params.set("tab", "map");
+      params.set("city", selectedCity.slug);
+      if (selectedRestaurantId) params.set("restaurant", selectedRestaurantId);
+      const url = `/?${params.toString()}`;
+      if (prevTab.current !== "map") {
+        // Switching to map tab — push so there's a history entry
+        window.history.pushState(null, "", url);
+      } else {
+        // Already on map, just update params (city/restaurant change)
+        window.history.replaceState(null, "", url);
+      }
+    } else if (activeTab === "home" && prevTab.current === "map") {
+      window.history.replaceState(null, "", "/");
+    }
+    prevTab.current = activeTab;
+  }, [activeTab, selectedCity.slug, selectedRestaurantId]);
 
   const handleCitySelect = (city: City) => {
     setSelectedCity(city);
