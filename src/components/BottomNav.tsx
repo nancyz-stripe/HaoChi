@@ -9,49 +9,62 @@ interface BottomNavProps {
 
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-[1001] bg-white border-t border-[#D8DCE0] lg:hidden">
-      <div className="flex px-6 py-3">
+    <nav className="fixed bottom-0 inset-x-0 z-[1001] bg-white border-t-2 border-[#F7F7F7] lg:hidden">
+      <div className="flex items-center justify-between px-4 py-6">
+        {/* Home tab */}
         <button
           onClick={() => onTabChange("home")}
-          className="flex-1 flex flex-col items-center gap-0.5 touch-manipulation transition-colors"
+          className={`flex-1 flex items-center justify-center rounded-[43px] h-[63px] touch-manipulation transition-colors ${
+            activeTab === "home" ? "bg-[#F4F7FA]" : "bg-white"
+          }`}
         >
-          <Heart
-            className="h-6 w-6"
-            style={{
-              color: activeTab === "home" ? "#1A2C44" : "#717375",
-              fill: activeTab === "home" ? "#1A2C44" : "none",
-            }}
-          />
-          <span
-            className="text-[12px]"
-            style={{
-              color: activeTab === "home" ? "#1A2C44" : "#717375",
-              fontWeight: activeTab === "home" ? 500 : 400,
-            }}
-          >
-            Home
-          </span>
+          <div className="flex flex-col items-center gap-1">
+            <Heart
+              className="h-6 w-6"
+              style={{
+                color: activeTab === "home" ? "#1A2C44" : "#667691",
+                fill: activeTab === "home" ? "#1A2C44" : "none",
+                strokeWidth: 1.5,
+              }}
+            />
+            <span
+              className="text-[12px] leading-[16px]"
+              style={{
+                color: activeTab === "home" ? "#1A2C44" : "#667691",
+                fontWeight: activeTab === "home" ? 500 : 400,
+              }}
+            >
+              Home
+            </span>
+          </div>
         </button>
+
+        {/* Map tab */}
         <button
           onClick={() => onTabChange("map")}
-          className="flex-1 flex flex-col items-center gap-0.5 touch-manipulation transition-colors"
+          className={`flex-1 flex items-center justify-center rounded-[43px] h-[63px] touch-manipulation transition-colors ${
+            activeTab === "map" ? "bg-[#F4F7FA]" : "bg-white"
+          }`}
         >
-          <MapPin
-            className="h-6 w-6"
-            style={{
-              color: activeTab === "map" ? "#0A0A0A" : "#717375",
-              fill: activeTab === "map" ? "#0A0A0A" : "none",
-            }}
-          />
-          <span
-            className="text-[12px]"
-            style={{
-              color: activeTab === "map" ? "#0A0A0A" : "#717375",
-              fontWeight: activeTab === "map" ? 500 : 400,
-            }}
-          >
-            Map
-          </span>
+          <div className="flex flex-col items-center gap-1">
+            <MapPin
+              className="h-6 w-6"
+              style={{
+                color: activeTab === "map" ? "#1A2C44" : "#667691",
+                fill: activeTab === "map" ? "#1A2C44" : "none",
+                strokeWidth: 1.5,
+              }}
+            />
+            <span
+              className="text-[12px] leading-[16px]"
+              style={{
+                color: activeTab === "map" ? "#1A2C44" : "#667691",
+                fontWeight: activeTab === "map" ? 500 : 400,
+              }}
+            >
+              Map
+            </span>
+          </div>
         </button>
       </div>
       <div className="h-[env(safe-area-inset-bottom)]" />
