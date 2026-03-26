@@ -270,17 +270,32 @@ export function ChinaMap({
     }
   }, [selectedCity, ready]);
 
-  // Center on selected restaurant
+  // Center on selected restaurant, offset for top nav and bottom sheet
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !ready || !selectedRestaurantId) return;
+    const leaflet = leafletRef.current;
+    if (!map || !leaflet || !ready || !selectedRestaurantId) return;
 
     const restaurant = restaurants.find((r) => r.id === selectedRestaurantId);
     if (!restaurant) return;
 
     try {
       const [lat, lng] = toCoord(restaurant.lat, restaurant.lng, useGcj02Ref.current);
-      map.setView({ lat, lng }, 15, { animate: true });
+      const targetZoom = 15;
+      const point = map.project({ lat, lng }, targetZoom);
+
+      // Offset so pin appears in visible area between top nav (~56px) and bottom sheet (~45vh)
+      const topNav = 56;
+      const bottomSheet = window.innerHeight * 0.45;
+      const mapHeight = map.getSize().y;
+      // Visible center is shifted down from map center by half the difference
+      const visibleCenter = (topNav + (mapHeight - bottomSheet)) / 2;
+      const mapCenter = mapHeight / 2;
+      const offsetY = visibleCenter - mapCenter;
+
+      const offsetPoint = point.subtract([0, offsetY]);
+      const offsetLatLng = map.unproject(offsetPoint, targetZoom);
+      map.setView(offsetLatLng, targetZoom, { animate: true });
     } catch {
       // Map may have been removed
     }
