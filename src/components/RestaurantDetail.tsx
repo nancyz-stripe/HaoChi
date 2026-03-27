@@ -192,7 +192,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 <div className="h-px bg-[#ECF1F6]" />
 
                 {/* Description */}
-                <p className="text-[14px] font-normal text-[#717375] leading-[18px]">
+                <p className="text-[15px] font-normal text-[#717375] leading-[20px] line-clamp-2">
                   {dish.description}
                 </p>
               </div>

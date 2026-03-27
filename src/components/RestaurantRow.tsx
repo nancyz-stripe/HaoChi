@@ -34,7 +34,7 @@ export function RestaurantRow({ restaurant, selected, onClick }: RestaurantRowPr
         <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
           {restaurant.name_en} {restaurant.name_zh}
         </p>
-        <p className="text-[14px] font-normal leading-[18px] text-[#717375] line-clamp-2">
+        <p className="text-[15px] font-normal leading-[20px] text-[#717375] line-clamp-2">
           {restaurant.short_description}
         </p>
       </div>
