@@ -35,7 +35,7 @@ export function CityGrid({ onSelect }: CityGridProps) {
             </div>
             <p className="mt-2 text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
               {city.name_en}{" "}
-              <span className="text-[#273951]">{city.name_zh}</span>
+              <span className="text-[#1A2C44]">{city.name_zh}</span>
             </p>
           </button>
         ))}
