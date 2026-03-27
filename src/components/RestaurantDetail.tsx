@@ -89,7 +89,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
         <div className="flex flex-col gap-3">
           {/* Name + copy */}
           <div className="flex items-center gap-2">
-            <h1 className="text-[32px] font-medium leading-[42px] text-[#1A2C44]">
+            <h1 className="text-[24px] font-medium leading-[32px] text-[#1A2C44]">
               {restaurant.name_en} {restaurant.name_zh}
             </h1>
             <button
