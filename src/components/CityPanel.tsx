@@ -61,7 +61,7 @@ export function CityPanel({ city, variant = "full", selectedRestaurantId, onRest
 
     return (
       <div>
-        <h2 className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
+        <h2 className="text-[16px] font-medium leading-[22px] text-[#1A2C44]">
           Restaurants in {city.name_en}
         </h2>
         <div className="mt-3 flex flex-col gap-3">

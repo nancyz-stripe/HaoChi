@@ -15,7 +15,7 @@ export function RestaurantRow({ restaurant, selected, onClick }: RestaurantRowPr
   const city = cities.find((c) => c.id === restaurant.city_id);
 
   const borderClass = selected
-    ? "border-2 border-[#0A0A0A]"
+    ? "border-2 border-[#1A2C44]"
     : "border border-[#E4E9EC]";
 
   return (
@@ -26,7 +26,7 @@ export function RestaurantRow({ restaurant, selected, onClick }: RestaurantRowPr
     >
       <div className="flex flex-col gap-[6px]">
         <div className="flex items-center justify-between">
-          <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
+          <p className="text-[16px] font-medium leading-[22px] text-[#1A2C44]">
             {restaurant.name_en} {restaurant.name_zh}
           </p>
           {restaurant.featured && (

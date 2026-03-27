@@ -89,7 +89,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
         <div className="flex flex-col gap-3">
           {/* Name + copy */}
           <div className="flex items-center gap-2">
-            <h1 className="text-[22px] font-medium leading-[28px] text-[#0A0A0A]">
+            <h1 className="text-[22px] font-medium leading-[28px] text-[#1A2C44]">
               {restaurant.name_en} {restaurant.name_zh}
             </h1>
             <button
@@ -133,7 +133,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
         </div>
 
         {/* Food recommendations */}
-        <h2 className="mt-6 text-[18px] font-medium leading-[24px] text-[#0A0A0A]">
+        <h2 className="mt-6 text-[18px] font-medium leading-[24px] text-[#1A2C44]">
           Food recommendations
         </h2>
 
@@ -149,7 +149,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               >
                 {/* Name + badge inline */}
                 <div className="flex items-start justify-between gap-2">
-                  <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A] flex-1 min-w-0">
+                  <p className="text-[16px] font-medium leading-[22px] text-[#1A2C44] flex-1 min-w-0">
                     {dish.name_en} {dish.name_zh}
                   </p>
                   {isMustTry && (

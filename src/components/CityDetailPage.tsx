@@ -72,7 +72,7 @@ export function CityDetailPage({
           onClick={onBack}
           className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
         >
-          <ArrowLeft className="h-5 w-5 text-[#0A0A0A]" />
+          <ArrowLeft className="h-5 w-5 text-[#1A2C44]" />
         </button>
         <div className="relative">
           <button
@@ -80,7 +80,7 @@ export function CityDetailPage({
             onClick={onToggleCityPicker}
             className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
           >
-            <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+            <span className="text-[14px] font-medium leading-[18px] text-[#1A2C44]">
               {city.name_en} {city.name_zh}
             </span>
             <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />
@@ -111,7 +111,7 @@ export function CityDetailPage({
 
       {/* What to eat */}
       <div className="p-6">
-        <h2 className="text-[22px] font-medium leading-[28px] text-[#0A0A0A]">
+        <h2 className="text-[22px] font-medium leading-[28px] text-[#1A2C44]">
           What to eat in {city.name_en}
         </h2>
         {dishes.length > 0 && (
@@ -130,7 +130,7 @@ export function CityDetailPage({
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <p className="text-[13px] font-medium text-[#0A0A0A] text-center leading-normal">
+                <p className="text-[13px] font-medium text-[#1A2C44] text-center leading-normal">
                   {dish.label}
                 </p>
               </button>
@@ -141,7 +141,7 @@ export function CityDetailPage({
 
       {/* Top restaurants */}
       <div className="p-6 pt-0">
-        <h2 className="text-[22px] font-medium leading-[28px] text-[#0A0A0A]">
+        <h2 className="text-[22px] font-medium leading-[28px] text-[#1A2C44]">
           Top restaurants in {city.name_en}
         </h2>
         <div className="mt-6 flex flex-col gap-3">
@@ -162,7 +162,7 @@ export function CityDetailPage({
               onClick={() => setShowGallery(false)}
               className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
             >
-              <X className="h-4 w-4 text-[#0A0A0A]" />
+              <X className="h-4 w-4 text-[#1A2C44]" />
             </button>
           </div>
           {/* Scrollable images */}
@@ -176,7 +176,7 @@ export function CityDetailPage({
                     alt={dish.label}
                     className="h-full w-full object-cover"
                   />
-                  <span className="absolute bottom-2 left-2 bg-[#F4F7FA] px-2 py-1 rounded-[4px] text-[10px] font-medium text-[#0A0A0A] whitespace-nowrap">
+                  <span className="absolute bottom-2 left-2 bg-[#F4F7FA] px-2 py-1 rounded-[4px] text-[10px] font-medium text-[#1A2C44] whitespace-nowrap">
                     {dish.label}
                   </span>
                 </div>

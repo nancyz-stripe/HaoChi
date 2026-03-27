@@ -312,9 +312,9 @@ export function HomePage() {
               <button
                 key={city.id}
                 onClick={() => handleCitySelect(city)}
-                className={`w-full rounded-[20px] px-4 py-3 text-[14px] font-normal leading-[18px] text-[#0A0A0A] touch-manipulation transition-colors ${
+                className={`w-full rounded-[20px] px-4 py-3 text-[14px] font-normal leading-[18px] text-[#1A2C44] touch-manipulation transition-colors ${
                   isSelected
-                    ? "bg-[#F7F7F7] border-2 border-[#0A0A0A]"
+                    ? "bg-[#F7F7F7] border-2 border-[#1A2C44]"
                     : "bg-white border border-[#D8DCE0]"
                 }`}
               >
@@ -397,7 +397,7 @@ export function HomePage() {
               <p className="text-[14px] font-normal leading-[18px] text-[#273951]">
                 EAT AROUND CHINA WITH NANCY
               </p>
-              <h1 className="mt-1 text-[32px] font-medium leading-[42px] text-[#0A0A0A]">
+              <h1 className="mt-1 text-[32px] font-medium leading-[42px] text-[#1A2C44]">
                 Pick a city
               </h1>
             </div>
@@ -444,14 +444,14 @@ export function HomePage() {
                 onClick={() => router.back()}
                 className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
               >
-                <ArrowLeft className="h-5 w-5 text-[#0A0A0A]" />
+                <ArrowLeft className="h-5 w-5 text-[#1A2C44]" />
               </button>
               <button
                 ref={pickerToggleRef}
                 onClick={() => setShowCityPicker(!showCityPicker)}
                 className="bg-[#F7F7F7] rounded-[43px] px-3 py-3 flex items-center justify-between w-[202px] touch-manipulation"
               >
-                <span className="text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+                <span className="text-[14px] font-medium leading-[18px] text-[#1A2C44]">
                   {selectedCity.name_en} {selectedCity.name_zh}
                 </span>
                 <ChevronDown className="h-[18px] w-[18px] text-[#717375]" />

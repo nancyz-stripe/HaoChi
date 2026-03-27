@@ -26,7 +26,7 @@ export default function RootLayout({
         {/* Desktop gate — visible only on lg+ screens */}
         <div className="hidden lg:flex fixed inset-0 z-[9999] bg-white items-center justify-center">
           <div className="text-center px-6">
-            <p className="text-[28px] font-medium text-[#0A0A0A]">Hao Chi!</p>
+            <p className="text-[28px] font-medium text-[#1A2C44]">Hao Chi!</p>
             <p className="mt-2 text-[16px] text-[#717375] leading-relaxed max-w-[360px]">
               This experience is designed for mobile.
               <br />
