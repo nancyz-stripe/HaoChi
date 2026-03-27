@@ -489,11 +489,8 @@ export function HomePage() {
               pushUrl(`/?tab=map&city=${selectedCity.slug}`);
             } else {
               setActiveTab("home");
-              if (showCityDetail) {
-                replaceUrl(`/?city=${selectedCity.slug}`);
-              } else {
-                replaceUrl("/");
-              }
+              setShowCityDetail(false);
+              replaceUrl("/");
             }
           }}
         />
