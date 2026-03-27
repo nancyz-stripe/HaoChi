@@ -147,17 +147,27 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 key={rec.dish_id}
                 className="rounded-[12px] border border-[#E4E9EC] p-[14px] flex flex-col gap-2"
               >
-                {/* Badge row */}
-                {isMustTry && (
-                  <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
-                    <Sparkles className="h-3 w-3" />
-                    MUST TRY
-                  </span>
-                )}
+                {/* Name + pinyin */}
+                <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
+                  {dish.name_en} {dish.name_zh}
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-[14px] font-normal text-[#273951]">
+                    {dish.pinyin}
+                  </p>
+                  <button
+                    onClick={() => speakChinese(dish.name_zh)}
+                    className="shrink-0 touch-manipulation active:scale-95"
+                  >
+                    <Volume2 className="h-[18px] w-[18px] text-[#1A2C44]" />
+                  </button>
+                </div>
 
-                {/* Image + content row */}
+                {/* Divider */}
+                <div className="h-px bg-[#ECF1F6]" />
+
+                {/* Image + description + badge */}
                 <div className="flex gap-2 items-start">
-                  {/* Dish image */}
                   <button
                     onClick={() => setEnlargedImage("/images/dishes/cq-hotpot.png")}
                     className="h-[84px] w-[88px] shrink-0 rounded-[3.5px] overflow-hidden bg-neutral-100 touch-manipulation"
@@ -169,32 +179,18 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                       className="h-full w-full object-cover"
                     />
                   </button>
-                  {/* Content */}
-                  <div className="flex flex-col gap-2 flex-1 min-w-0">
-                    <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
-                      {dish.name_en} {dish.name_zh}
+                  <div className="flex flex-col gap-2 flex-1 min-w-0 items-end">
+                    <p className="text-[15px] font-normal text-[#717375] leading-[20px] line-clamp-2 w-full">
+                      {dish.description}
                     </p>
-                    <div className="flex items-center gap-2">
-                      <p className="text-[14px] font-normal text-[#273951]">
-                        {dish.pinyin}
-                      </p>
-                      <button
-                        onClick={() => speakChinese(dish.name_zh)}
-                        className="shrink-0 touch-manipulation active:scale-95"
-                      >
-                        <Volume2 className="h-[18px] w-[18px] text-[#1A2C44]" />
-                      </button>
-                    </div>
+                    {isMustTry && (
+                      <span className="inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
+                        <Sparkles className="h-3 w-3" />
+                        MUST TRY
+                      </span>
+                    )}
                   </div>
                 </div>
-
-                {/* Divider */}
-                <div className="h-px bg-[#ECF1F6]" />
-
-                {/* Description */}
-                <p className="text-[15px] font-normal text-[#717375] leading-[20px] line-clamp-2">
-                  {dish.description}
-                </p>
               </div>
             );
           })}
