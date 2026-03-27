@@ -33,7 +33,7 @@ export function CityGrid({ onSelect }: CityGridProps) {
                 className="h-full w-full object-cover"
               />
             </div>
-            <p className="mt-2 text-[14px] font-medium leading-[18px] text-[#0A0A0A]">
+            <p className="mt-2 text-[16px] font-medium leading-[22px] text-[#0A0A0A] text-center">
               {city.name_en}{" "}
               <span className="text-[#1A2C44]">{city.name_zh}</span>
             </p>
