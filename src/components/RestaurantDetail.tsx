@@ -149,7 +149,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
               >
                 {/* Badge row */}
                 {isMustTry && (
-                  <span className="self-end inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
+                  <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
                     <Sparkles className="h-3 w-3" />
                     MUST TRY
                   </span>
