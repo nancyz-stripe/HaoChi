@@ -126,7 +126,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
             onClick={() => {
               router.push(`/?tab=map&city=${city?.slug}&restaurant=${restaurant.id}`);
             }}
-            className="text-[14px] font-medium leading-[18px] text-[#717375] underline text-left w-fit touch-manipulation"
+            className="text-[14px] font-medium leading-[18px] text-[#273951] underline text-left w-fit touch-manipulation"
           >
             View in map
           </button>
@@ -173,7 +173,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                       {dish.name_en} {dish.name_zh}
                     </p>
                     <div className="flex items-center gap-2">
-                      <p className="text-[12px] font-normal text-[#717375]">
+                      <p className="text-[12px] font-normal text-[#273951]">
                         {dish.pinyin}
                       </p>
                       <button
@@ -190,7 +190,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 <div className="h-px bg-[#ECF1F6]" />
 
                 {/* Description */}
-                <p className="text-[12px] font-normal text-[#717375] leading-normal">
+                <p className="text-[12px] font-normal text-[#273951] leading-normal">
                   {dish.description}
                 </p>
               </div>
