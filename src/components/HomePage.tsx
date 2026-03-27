@@ -191,15 +191,17 @@ export function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Handle URL params on load (e.g. from "View in map" or browser back)
+  // Handle URL params on initial load only (e.g. from "View in map" or browser back)
   const initializedFromUrl = useRef(false);
   useEffect(() => {
+    if (initializedFromUrl.current) return;
+    initializedFromUrl.current = true;
+
     const tab = searchParams.get("tab");
     const citySlug = searchParams.get("city");
     const restaurantId = searchParams.get("restaurant");
 
     if (tab === "map") {
-      initializedFromUrl.current = true;
       setActiveTab("map");
       if (citySlug) {
         const city = cities.find((c) => c.slug === citySlug);
@@ -209,8 +211,6 @@ export function HomePage() {
         setSelectedRestaurantId(restaurantId);
       }
     } else if (citySlug) {
-      // Restore city detail page (e.g. browser back from restaurant)
-      initializedFromUrl.current = true;
       const city = cities.find((c) => c.slug === citySlug);
       if (city) {
         setSelectedCity(city);
@@ -219,6 +219,39 @@ export function HomePage() {
       }
     }
   }, [searchParams]);
+
+  // Handle browser back/forward to restore correct view state
+  useEffect(() => {
+    const onPopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get("tab");
+      const citySlug = params.get("city");
+
+      if (tab === "map") {
+        setActiveTab("map");
+        setShowCityDetail(false);
+        if (citySlug) {
+          const city = cities.find((c) => c.slug === citySlug);
+          if (city) setSelectedCity(city);
+        }
+      } else if (citySlug) {
+        const city = cities.find((c) => c.slug === citySlug);
+        if (city) {
+          setSelectedCity(city);
+          setShowCityDetail(true);
+          setActiveTab("home");
+        }
+      } else {
+        setShowCityDetail(false);
+        setActiveTab("home");
+      }
+      setShowCityPicker(false);
+      setSelectedRestaurantId(null);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   // Push/replace URL state for navigation transitions
   // Only pushState on actual view changes; all other updates use replaceState
