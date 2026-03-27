@@ -189,7 +189,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                       className="h-full w-full object-cover"
                     />
                   </button>
-                  <p className="text-[15px] font-normal text-[#273951] leading-[20px] line-clamp-2 flex-1 min-w-0">
+                  <p className="text-[15px] font-normal text-[#273951] leading-[20px] line-clamp-4 flex-1 min-w-0">
                     {dish.description}
                   </p>
                 </div>
