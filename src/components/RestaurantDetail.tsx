@@ -147,7 +147,15 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 key={rec.dish_id}
                 className="rounded-[12px] border border-[#E4E9EC] p-[14px] flex flex-col gap-2"
               >
-                {/* Top row: image + content */}
+                {/* Badge row */}
+                {isMustTry && (
+                  <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
+                    <Sparkles className="h-3 w-3" />
+                    MUST TRY
+                  </span>
+                )}
+
+                {/* Image + content row */}
                 <div className="flex gap-2 items-start">
                   {/* Dish image */}
                   <button
@@ -163,17 +171,11 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                   </button>
                   {/* Content */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
-                    {isMustTry && (
-                      <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
-                        <Sparkles className="h-3 w-3" />
-                        MUST TRY
-                      </span>
-                    )}
                     <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
                       {dish.name_en} {dish.name_zh}
                     </p>
                     <div className="flex items-center gap-2">
-                      <p className="text-[14px] font-normal text-[#1A2C44]">
+                      <p className="text-[14px] font-normal text-[#273951]">
                         {dish.pinyin}
                       </p>
                       <button
@@ -190,7 +192,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                 <div className="h-px bg-[#ECF1F6]" />
 
                 {/* Description */}
-                <p className="text-[16px] font-normal text-[#1A2C44] leading-normal">
+                <p className="text-[14px] font-normal text-[#717375] leading-[18px]">
                   {dish.description}
                 </p>
               </div>
