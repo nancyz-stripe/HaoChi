@@ -31,7 +31,7 @@ export function RestaurantRow({ restaurant, selected, onClick }: RestaurantRowPr
             <span className="text-[#0A0A0A]">{restaurant.name_zh}</span>
           </p>
           {restaurant.featured && (
-            <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[9px] font-medium text-[#1A2C44]">
+            <span className="shrink-0 ml-2 inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
               <Sparkles className="h-3 w-3" />
               LOCAL GEM
             </span>

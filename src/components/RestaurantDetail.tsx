@@ -164,7 +164,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                   {/* Content */}
                   <div className="flex flex-col gap-2 flex-1 min-w-0">
                     {isMustTry && (
-                      <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[9px] font-medium text-[#1A2C44]">
+                      <span className="self-start inline-flex items-center gap-1 rounded-[4px] bg-[#F4F7FA] px-2 py-1 text-[12px] font-medium text-[#1A2C44]">
                         <Sparkles className="h-3 w-3" />
                         MUST TRY
                       </span>
