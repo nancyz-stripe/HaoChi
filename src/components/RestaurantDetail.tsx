@@ -79,7 +79,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
           onClick={() => router.back()}
           className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
         >
-          <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
+          <ArrowLeft className="h-4 w-4 text-[#1A2C44]" />
         </button>
       </div>
 
@@ -180,7 +180,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                         onClick={() => speakChinese(dish.name_zh)}
                         className="shrink-0 touch-manipulation active:scale-95"
                       >
-                        <Volume2 className="h-4 w-4 text-[#717375]" />
+                        <Volume2 className="h-4 w-4 text-[#1A2C44]" />
                       </button>
                     </div>
                   </div>
@@ -243,6 +243,6 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
 /** Small copy icon matching the Figma design (two overlapping rectangles) */
 function CopyIcon() {
   return (
-    <Copy className="h-4 w-4 text-[#717375]" />
+    <Copy className="h-4 w-4 text-[#1A2C44]" />
   );
 }
