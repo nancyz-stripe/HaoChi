@@ -115,7 +115,7 @@ export function CityDetailPage({
           What to eat in {city.name_en}
         </h2>
         {dishes.length > 0 && (
-          <div className="mt-6 flex gap-[15px]">
+          <div className="mt-6 -mx-6 px-6 flex gap-[15px] overflow-x-auto scrollbar-none">
             {dishes.map((dish) => (
               <button
                 key={dish.label}
@@ -130,7 +130,7 @@ export function CityDetailPage({
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <p className="text-[10px] font-medium text-[#0A0A0A] text-center leading-normal">
+                <p className="text-[13px] font-medium text-[#0A0A0A] text-center leading-normal">
                   {dish.label}
                 </p>
               </button>
