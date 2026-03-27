@@ -169,7 +169,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
                         MUST TRY
                       </span>
                     )}
-                    <p className="text-[14px] font-medium text-[#0A0A0A]">
+                    <p className="text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
                       {dish.name_en} {dish.name_zh}
                     </p>
                     <div className="flex items-center gap-2">
