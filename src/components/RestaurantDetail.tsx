@@ -133,11 +133,11 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
         </div>
 
         {/* Food recommendations */}
-        <h2 className="mt-6 text-[16px] font-medium leading-[22px] text-[#0A0A0A]">
+        <h2 className="mt-6 text-[18px] font-medium leading-[24px] text-[#0A0A0A]">
           Food recommendations
         </h2>
 
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-4 flex flex-col gap-3">
           {recs.map((rec) => {
             const dish = rec.dish;
             const isMustTry = mustOrderIds.has(dish.id);
