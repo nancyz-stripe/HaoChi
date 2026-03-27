@@ -444,7 +444,7 @@ export function HomePage() {
                 onClick={() => router.back()}
                 className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
               >
-                <ArrowLeft className="h-4 w-4 text-[#0A0A0A]" />
+                <ArrowLeft className="h-5 w-5 text-[#0A0A0A]" />
               </button>
               <button
                 ref={pickerToggleRef}

@@ -79,7 +79,7 @@ export function RestaurantDetail({ restaurant }: RestaurantDetailProps) {
           onClick={() => router.back()}
           className="rounded-[24px] bg-white p-2 touch-manipulation active:scale-95"
         >
-          <ArrowLeft className="h-[18px] w-[18px] text-[#1A2C44]" />
+          <ArrowLeft className="h-5 w-5 text-[#1A2C44]" />
         </button>
       </div>
 
