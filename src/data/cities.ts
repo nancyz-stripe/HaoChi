@@ -13,7 +13,7 @@ export const cities: City[] = [
     hero_image: "/images/chongqing-hero.jpg",
     map_center: [29.563, 106.5516],
     zoom: 12,
-    signature_dish_ids: ["cq-hotpot", "cq-xiaomian", "cq-laziji", "cq-suanlafen", "cq-maoxuewang"],
+    signature_dish_ids: ["cq-hotpot", "cq-xiaomian", "cq-laziji", "cq-suanlafen", "cq-maoxuewang", "cq-kaoyu", "cq-lengguochuanchuan"],
     first_meal_dish_ids: ["cq-xiaomian", "cq-hotpot", "cq-suanlafen"],
   },
   {
@@ -28,8 +28,8 @@ export const cities: City[] = [
     hero_image: "/images/xian-hero.jpg",
     map_center: [34.2583, 108.9286],
     zoom: 13,
-    signature_dish_ids: ["xa-roujiamo", "xa-yangroupaomo", "xa-biangbiang", "xa-liangpi", "xa-guantangbao"],
-    first_meal_dish_ids: ["xa-roujiamo", "xa-liangpi", "xa-biangbiang"],
+    signature_dish_ids: ["xa-roujiamo", "xa-yangroupaomo", "xa-biangbiang", "xa-liangpi", "xa-guantangbao", "xa-huluji", "xa-hulataing"],
+    first_meal_dish_ids: ["xa-roujiamo", "xa-hulataing", "xa-biangbiang"],
   },
   {
     id: "beijing",
@@ -43,7 +43,7 @@ export const cities: City[] = [
     hero_image: "/images/beijing-hero.jpg",
     map_center: [39.9042, 116.4074],
     zoom: 12,
-    signature_dish_ids: ["bj-roastduck", "bj-zhajiangmian", "bj-hotpot", "bj-jiaozi", "bj-zhajiang"],
+    signature_dish_ids: ["bj-roastduck", "bj-zhajiangmian", "bj-hotpot", "bj-jiaozi", "bj-zhajiang", "bj-baodu", "bj-mendingrouping"],
     first_meal_dish_ids: ["bj-roastduck", "bj-zhajiangmian", "bj-jiaozi"],
   },
   {
@@ -58,8 +58,8 @@ export const cities: City[] = [
     hero_image: "/images/zhangjiajie-hero.jpg",
     map_center: [29.1168, 110.4792],
     zoom: 13,
-    signature_dish_ids: ["zjj-sanxiaguo", "zjj-xiangxilarou", "zjj-tujiazhangyu", "zjj-suanroufenpi"],
-    first_meal_dish_ids: ["zjj-sanxiaguo", "zjj-tujiazhangyu"],
+    signature_dish_ids: ["zjj-sanxiaguo", "zjj-xiangxilarou", "zjj-tujiazhangyu", "zjj-suanroufenpi", "zjj-yanerji", "zjj-tujiakourou"],
+    first_meal_dish_ids: ["zjj-sanxiaguo", "zjj-tujiazhangyu", "zjj-yanerji"],
   },
   {
     id: "furong",
@@ -73,7 +73,7 @@ export const cities: City[] = [
     hero_image: "/images/furong-hero.jpg",
     map_center: [28.9497, 109.9883],
     zoom: 15,
-    signature_dish_ids: ["fr-midoufu", "fr-larou", "fr-suantangyu", "fr-shebajiang"],
-    first_meal_dish_ids: ["fr-midoufu", "fr-larou"],
+    signature_dish_ids: ["fr-midoufu", "fr-larou", "fr-suantangyu", "fr-shebajiang", "fr-xuebaya", "fr-heluo"],
+    first_meal_dish_ids: ["fr-midoufu", "fr-larou", "fr-xuebaya"],
   },
 ];

@@ -97,6 +97,46 @@ export const dishes: Dish[] = [
     image: "/images/dishes/cq-maoxuewang.jpg",
   },
 
+  // --- Chongqing: New dishes from local recommendations ---
+  {
+    id: "cq-kaoyu",
+    city_id: "chongqing",
+    name_en: "Chongqing Grilled Fish",
+    name_zh: "重庆烤鱼",
+    pinyin: "chóng qìng kǎo yú",
+    description:
+      "Whole fish grilled over charcoal then simmered in a tray of fiery mala sauce with tofu, bean sprouts, and vegetables. A Chongqing street-food icon.",
+    spice_level: "very_hot",
+    ingredients: ["whole fish", "chili bean paste", "Sichuan peppercorn", "tofu", "bean sprouts", "garlic"],
+    dietary_flags: ["contains-fish"],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "Grilled fish is one of Chongqing's biggest food exports — kaoyu restaurants have spread across China, but the Chongqing original is still the best. The mala flavor profile here is more intense than anywhere else.",
+    ordering_tip: "Choose douchi (豆豉/black bean) or mala (麻辣) flavor. Wanzhou-style (万州烤鱼) is the most classic. Great for sharing.",
+    avoid_if: ["very spicy food", "fish"],
+    image: "/images/dishes/cq-kaoyu.jpg",
+  },
+  {
+    id: "cq-lengguochuanchuan",
+    city_id: "chongqing",
+    name_en: "Cold-Pot Skewers",
+    name_zh: "冷锅串串",
+    pinyin: "lěng guō chuàn chuàn",
+    description:
+      "Pre-cooked skewers of meat, tofu, vegetables, and offal sitting in a bath of room-temperature spicy red oil. Pick what you want and eat — no cooking required.",
+    spice_level: "hot",
+    ingredients: ["bamboo skewers", "various meats", "tofu", "vegetables", "chili oil", "Sichuan peppercorn"],
+    dietary_flags: ["contains-offal-options"],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "Cold-pot skewers are the casual, street-food cousin of hot pot. Hugely popular with Chongqing locals for late-night snacking — pick your own skewers, pay by the stick.",
+    ordering_tip: "Priced per skewer (often 0.5–2 RMB each). Grab a handful and explore. The lotus root, quail eggs, and beef tripe are local favorites.",
+    avoid_if: ["spicy food"],
+    image: "/images/dishes/cq-chuanchuan.jpg",
+  },
+
   // ========== XI'AN ==========
   {
     id: "xa-roujiamo",
@@ -187,6 +227,46 @@ export const dishes: Dish[] = [
     ordering_tip: "Bite a small hole, sip the soup first, then eat. Dip in vinegar with shredded ginger.",
     avoid_if: [],
     image: "/images/dishes/xa-guantangbao.jpg",
+  },
+
+  // --- Xi'an: New dishes from local recommendations ---
+  {
+    id: "xa-huluji",
+    city_id: "xian",
+    name_en: "Gourd Chicken (Huluji)",
+    name_zh: "葫芦鸡",
+    pinyin: "hú lu jī",
+    description:
+      "Whole chicken that is boiled, steamed, then deep-fried — yielding impossibly crispy skin with fall-off-the-bone tender meat inside. A Xi'an banquet classic.",
+    spice_level: "none",
+    ingredients: ["whole chicken", "star anise", "cinnamon", "Sichuan peppercorn", "ginger", "cooking wine"],
+    dietary_flags: [],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "Known as 'the first flavor of Chang'an' (长安第一味), gourd chicken is Xi'an's most celebrated banquet dish. The triple-cooking technique dates back to the Tang Dynasty.",
+    ordering_tip: "Best at Xi'an Fanzhuang (西安饭庄), the heritage restaurant that perfected the recipe. Tear the chicken apart by hand — that's the traditional way.",
+    avoid_if: [],
+    image: "/images/dishes/xa-huluji.jpg",
+  },
+  {
+    id: "xa-hulataing",
+    city_id: "xian",
+    name_en: "Meatball Spicy Soup (Hulataing)",
+    name_zh: "肉丸胡辣汤",
+    pinyin: "ròu wán hú là tāng",
+    description:
+      "A thick, peppery breakfast soup packed with meatballs, potato, cauliflower, kelp, and wood ear mushroom. Eaten with a piece of flatbread torn in.",
+    spice_level: "medium",
+    ingredients: ["meatballs", "potato", "cauliflower", "kelp", "wood ear mushroom", "white pepper", "flatbread"],
+    dietary_flags: [],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "This is THE quintessential Xi'an breakfast — every local has a favorite stall. Unlike Henan's version, Xi'an hulataing is thicker and meatball-focused. It's the taste of a Xi'an morning.",
+    ordering_tip: "Go early (before 9am) for the freshest batch. Tear flatbread (馍) into the soup. Find it at stalls along Sajin Qiao (洒金桥) — where locals eat instead of the tourist Muslim Quarter.",
+    avoid_if: [],
+    image: "/images/dishes/xa-hulataing.jpg",
   },
 
   // ========== BEIJING ==========
@@ -281,6 +361,46 @@ export const dishes: Dish[] = [
     image: "/images/dishes/bj-luzhu.jpg",
   },
 
+  // --- Beijing: New dishes from local recommendations ---
+  {
+    id: "bj-baodu",
+    city_id: "beijing",
+    name_en: "Quick-Boiled Tripe (Baodu)",
+    name_zh: "爆肚",
+    pinyin: "bào dǔ",
+    description:
+      "Paper-thin slices of beef or lamb tripe blanched for seconds in boiling water, then dipped in a rich sesame paste sauce. The texture should be crisp and springy.",
+    spice_level: "none",
+    ingredients: ["beef or lamb tripe", "sesame paste", "chili oil", "fermented tofu", "vinegar", "scallion"],
+    dietary_flags: ["contains-offal"],
+    first_timer_friendly: false,
+    adventurous: true,
+    why_it_matters:
+      "A quintessential old Beijing street snack with century-old heritage. Locals judge a tripe shop by how precisely they control blanching time — seconds make the difference between crisp and rubbery.",
+    ordering_tip: "Try multiple cuts — each part of the stomach has different texture. The sesame dipping sauce is essential. Pair with a cold beer.",
+    avoid_if: ["offal"],
+    image: "/images/dishes/bj-baodu.jpg",
+  },
+  {
+    id: "bj-mendingrouping",
+    city_id: "beijing",
+    name_en: "Doornail Meat Pies",
+    name_zh: "门钉肉饼",
+    pinyin: "mén dīng ròu bǐng",
+    description:
+      "Thick, round pan-fried meat pies shaped like the decorative brass doornails on Beijing's palace gates. Filled with seasoned beef or lamb, crispy outside and juicy inside.",
+    spice_level: "none",
+    ingredients: ["beef or lamb mince", "scallion", "ginger", "flour wrapper", "sesame oil"],
+    dietary_flags: [],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "Named after the studded brass doornails on the gates of the Forbidden City, these meat pies are a beloved old Beijing snack with imperial-era origins.",
+    ordering_tip: "Be careful when biting in — the filling is extremely hot and juicy. Tilt and sip the juice first, then eat. Best at Bai Kui Lao Hao (百魁老号) near Jiaodaokou.",
+    avoid_if: [],
+    image: "/images/dishes/bj-mendingrouping.jpg",
+  },
+
   // ========== ZHANGJIAJIE ==========
   {
     id: "zjj-sanxiaguo",
@@ -355,6 +475,46 @@ export const dishes: Dish[] = [
     image: "/images/dishes/zjj-suanrou.jpg",
   },
 
+  // --- Zhangjiajie: New dishes from local recommendations ---
+  {
+    id: "zjj-yanerji",
+    city_id: "zhangjiajie",
+    name_en: "Rock Ear Stewed Chicken",
+    name_zh: "岩耳炖土鸡",
+    pinyin: "yán ěr dùn tǔ jī",
+    description:
+      "Free-range local chicken slow-stewed with rock ear fungus — a rare lichen that grows on the sandstone cliffs of Zhangjiajie's pillar mountains. The broth is rich, nourishing, and earthy.",
+    spice_level: "none",
+    ingredients: ["free-range chicken", "rock ear fungus", "ginger", "goji berries", "red dates"],
+    dietary_flags: [],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "Rock ear (岩耳) only grows on Zhangjiajie's unique sandstone pillars and must be hand-harvested from cliff faces. This dish connects you directly to the landscape — you're eating the mountains.",
+    ordering_tip: "Order this as a warming soup dish alongside the spicier sanxia guo. The broth is the star — drink every drop.",
+    avoid_if: [],
+    image: "/images/dishes/zjj-yanerji.jpg",
+  },
+  {
+    id: "zjj-tujiakourou",
+    city_id: "zhangjiajie",
+    name_en: "Tujia Braised Pork Belly",
+    name_zh: "土家扣肉",
+    pinyin: "tǔ jiā kòu ròu",
+    description:
+      "Layered pork belly first fried golden, then steamed until meltingly tender, served inverted on a plate. A centerpiece of Tujia banquet cooking — rich, glossy, and slightly sweet.",
+    spice_level: "none",
+    ingredients: ["pork belly", "preserved mustard greens", "soy sauce", "rock sugar", "star anise"],
+    dietary_flags: [],
+    first_timer_friendly: true,
+    adventurous: false,
+    why_it_matters:
+      "No Tujia celebration is complete without kourou. It represents hospitality and abundance in Tujia culture — when this dish appears, it means you're being treated as an honored guest.",
+    ordering_tip: "The preserved mustard greens underneath absorb all the pork fat and flavor — don't skip them. Pair with steamed rice.",
+    avoid_if: ["fatty meat"],
+    image: "/images/dishes/zjj-kourou.jpg",
+  },
+
   // ========== FURONG ANCIENT TOWN ==========
   {
     id: "fr-midoufu",
@@ -427,5 +587,44 @@ export const dishes: Dish[] = [
     ordering_tip: "Try both sweet (bean paste) and savory (pork) versions. They're often sold in pairs.",
     avoid_if: [],
     image: "/images/dishes/fr-sheba.jpg",
+  },
+  // --- Furong: New dishes from local recommendations ---
+  {
+    id: "fr-xuebaya",
+    city_id: "furong",
+    name_en: "Blood Cake Duck",
+    name_zh: "血粑鸭",
+    pinyin: "xuè bā yā",
+    description:
+      "Duck stir-fried with sliced 'blood cakes' — sticky rice mixed with fresh duck blood, steamed into firm cakes, then pan-fried until crispy. Rich, savory, and uniquely Xiangxi.",
+    spice_level: "medium",
+    ingredients: ["duck", "sticky rice", "duck blood", "chili", "ginger", "garlic", "Sichuan peppercorn"],
+    dietary_flags: ["contains-blood"],
+    first_timer_friendly: false,
+    adventurous: true,
+    why_it_matters:
+      "Blood cake duck is one of the most iconic Tujia and Xiangxi dishes — the blood-rice cakes are unlike anything you'll find elsewhere. It's a dish born from resourcefulness, using every part of the duck.",
+    ordering_tip: "The blood cakes have a firm, chewy texture — think of them as savory rice cakes. Focus on the crispy edges for the best flavor.",
+    avoid_if: ["blood products"],
+    image: "/images/dishes/fr-xuebaya.jpg",
+  },
+  {
+    id: "fr-heluo",
+    city_id: "furong",
+    name_en: "Xiangxi River Snails",
+    name_zh: "天下第一螺",
+    pinyin: "tiān xià dì yī luó",
+    description:
+      "Large river snails from the Youshui River, stir-fried with generous chili, garlic, ginger, and Sichuan peppercorn in the sour-spicy Xiangxi style.",
+    spice_level: "hot",
+    ingredients: ["river snails", "chili", "garlic", "ginger", "Sichuan peppercorn", "perilla leaves"],
+    dietary_flags: ["contains-shellfish"],
+    first_timer_friendly: false,
+    adventurous: true,
+    why_it_matters:
+      "Called 'First-Under-Heaven Snail' by proud locals, these snails come straight from the Youshui River flowing through town. The sour-spicy preparation is pure Xiangxi character.",
+    ordering_tip: "Use a toothpick to pull the snail meat out. Suck the shell to get the flavorful sauce. Best enjoyed with cold beer on a waterfall-side terrace.",
+    avoid_if: ["shellfish"],
+    image: "/images/dishes/fr-heluo.jpg",
   },
 ];
